@@ -2,6 +2,7 @@
     Intention of this program is to be used as a general program to populate models
     that we draw so that we do not have to recreate the same thing over and over
 */
+// Ronnie Jackson small edit
 
 var gl, program, canvas;
 var drawCount = 0;
