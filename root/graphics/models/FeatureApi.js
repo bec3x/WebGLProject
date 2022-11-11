@@ -106,7 +106,7 @@ var MouseManipulation = {
     },
 
     _RegisterEvents: function () {
-        document.getElementById('gl-canvas').addEventListener("mousedown", function (e) {
+        document.getElementById(this.targetElement).addEventListener("mousedown", function (e) {
             if (e.which == 1) {
                 MouseManipulation.mouseDownLeft = true;
                 MouseManipulation.mouseDownRight = false;
@@ -123,13 +123,13 @@ var MouseManipulation = {
             Render();
         });
 
-        document.getElementById('gl-canvas').addEventListener("mouseup", function (e) {
+        document.getElementById(this.targetElement).addEventListener("mouseup", function (e) {
             MouseManipulation.mouseDownLeft = false;
             MouseManipulation.mouseDownRight = false;
             Render();
         });
 
-        document.getElementById('gl-canvas').addEventListener("mousemove", function (e) {
+        document.getElementById(this.targetElement).addEventListener("mousemove", function (e) {
             if (MouseManipulation.mouseDownRight) {
                 MouseManipulation.translateX += (e.x - MouseManipulation.mousePosX) / 30;
                 MouseManipulation.mousePosX = e.x;
