@@ -85,7 +85,6 @@ var FeatureApi = {
 
 var MouseManipulation = {
     targetElement: "",
-    renderFunction: null,
 
     phi: 1,
     theta: 0.5,
@@ -101,10 +100,8 @@ var MouseManipulation = {
     translateX: 0,
     translateY: 0,
 
-    init: function (targetElement, renderFunction) {
+    init: function (targetElement) {
         this.targetElement = targetElement;
-        this.renderFunction = renderFunction;
-
         this._RegisterEvents();
     },
 
@@ -123,13 +120,13 @@ var MouseManipulation = {
                 MouseManipulation.mousePosX = e.x;
             }
 
-            Render(renderFunction);
+            Render();
         });
 
         document.getElementById('gl-canvas').addEventListener("mouseup", function (e) {
             MouseManipulation.mouseDownLeft = false;
             MouseManipulation.mouseDownRight = false;
-            Render(renderFunction);
+            Render();
         });
 
         document.getElementById('gl-canvas').addEventListener("mousemove", function (e) {
@@ -147,7 +144,7 @@ var MouseManipulation = {
                 MouseManipulation.mousePosY = e.y;
             }
 
-            Render(renderFunction);
+            Render();
         });
     }
 };

@@ -4,7 +4,7 @@
 */
 var canvas, program, gl;
 
-var eye = [1, 1, 2];
+var eye = [1, 0.5, 1];
 var at = [0, 0, 0];
 var up = [0, 1, 0];
 
@@ -22,9 +22,13 @@ var modelViewMatrixLoc, projectionMatrixLoc;
 //#region Main
 window.onload = function init() {
     ConfigureWebGL();
-    GenerateTrafficCone();
+
+    MouseManipulation.init('gl-canvas');
+    Car.init(translate(-1, 0, 0));
+    TrafficCone.init(translate(2, 0, 0));
+
     InitBuffers();
-    Render(RenderTrafficCone);
+    Render();
 }
 //#endregion
 
@@ -78,14 +82,19 @@ const InitBuffers = () => {
     projectMatrixLoc = gl.getUniformLocation(program, "projectionMatrix");
 }
 
-const Render = (drawFunction) => {
-    if (drawFunction == null) return;
-    
+const Render = () => {
+    var drawCount = 0;
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.uniformMatrix4fv(projectMatrixLoc, false, flatten(projectionMatrix));
 
+    eye = vec3(MouseManipulation.radius * Math.cos(MouseManipulation.phi),
+        MouseManipulation.radius * Math.sin(MouseManipulation.theta),
+        MouseManipulation.radius * Math.sin(MouseManipulation.phi));
+
     modelViewMatrix = lookAt(eye, at, up);
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
-    drawFunction();
+
+    drawCount = Car.RenderCar(drawCount);
+    drawCount = TrafficCone.RenderTrafficCone(drawCount);
 }
 //#endregion
