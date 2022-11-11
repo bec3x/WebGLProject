@@ -68,7 +68,7 @@ var TrafficCone = {
     },
 
     RenderTrafficCone: function (drawCount) {
-        modelViewMatrix = mult(modelViewMatrix, this.tranlastionMatrix);
+        modelViewMatrix = mult(modelViewMatrix, mult(this.tranlastionMatrix, FeatureApi.scale4(1.1, 1.1, 1.1)));
         gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
 
         gl.drawArrays(gl.TRIANGLES, drawCount, this.numVertTrafficCone);

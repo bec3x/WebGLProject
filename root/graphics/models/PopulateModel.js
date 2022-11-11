@@ -24,8 +24,8 @@ window.onload = function init() {
     ConfigureWebGL();
 
     MouseManipulation.init('gl-canvas');
-    Car.init(translate(-1, 0, 0));
-    TrafficCone.init(translate(2, 0, 0));
+    Car.init(translate(-2, 0, 0));
+    TrafficCone.init(translate(2, -.3, 0));
 
     InitBuffers();
     Render();
@@ -52,7 +52,7 @@ const InitBuffers = () => {
     gl.clearColor(1, 1, 1, 1);
 
     viewerPos = vec3(4.0, 4.0, 4.0);
-    projectionMatrix = ortho(-2, 2, -2, 2, -20, 20);
+    projectionMatrix = ortho(-8, 8, -8, 8, -20, 20);
 
     var nBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, nBuffer);
@@ -92,9 +92,13 @@ const Render = () => {
         MouseManipulation.radius * Math.sin(MouseManipulation.phi));
 
     modelViewMatrix = lookAt(eye, at, up);
+    modelViewStack.push(modelViewMatrix);
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
 
     drawCount = Car.RenderCar(drawCount);
+    modelViewMatrix = modelViewStack[0];
+
     drawCount = TrafficCone.RenderTrafficCone(drawCount);
+    modelViewMatrix = modelViewStack.pop();
 }
 //#endregion

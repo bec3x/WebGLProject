@@ -11,7 +11,7 @@ var Car = {
 
     RenderCar: function (drawCount) {
         // Render Body
-        modelViewMatrix = mult(modelViewMatrix, this.translationMatrix);
+        modelViewMatrix = mult(modelViewMatrix, mult(this.translationMatrix, FeatureApi.scale4(4, 4, 4)));
         gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
 
         gl.drawArrays(gl.TRIANGLES, drawCount, this.bodyVertCount);
