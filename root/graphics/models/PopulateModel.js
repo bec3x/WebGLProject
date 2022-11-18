@@ -18,9 +18,10 @@ var modelViewMatrix = mat4(),
     projectionMatrix;
 var modelViewMatrixLoc, projectionMatrixLoc;
 
-var t1, t2;
-var car, car2;
 // #endregion
+
+var trafficLight;
+var stopSign;
 
 //#region Main
 window.onload = function init() {
@@ -28,17 +29,11 @@ window.onload = function init() {
 
     MouseManipulation.init('gl-canvas');
 
-    car = new Car(translate(-2, 0, 0));
-    car2 = new Car(translate(-2, 5, 0));
+    trafficLight = new TrafficLight();
+    trafficLight.GenerateTrafficLight();
 
-    t1 = new TrafficCone(translate(1, 0, 0));
-    t2 = new TrafficCone(translate(-1, 0, 3));
-    
-    car.GenerateCar();
-    car2.GenerateCar();
-
-    t1.GenerateTrafficCone();
-    t2.GenerateTrafficCone();
+    stopSign = new StopSign(translate(8, 2, 5));
+    stopSign.GenerateStopSign();
 
     InitBuffers();
     Render();
@@ -105,29 +100,16 @@ const Render = () => {
         MouseManipulation.radius * Math.sin(MouseManipulation.phi));
 
     modelViewMatrix = lookAt(eye, at, up);
+    gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
+
     modelViewStack.push(modelViewMatrix);
-    gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
+    trafficLight.RenderTrafficLight(drawCount);
+    drawCount += trafficLight.VertexCount;
+    modelViewMatrix = modelViewStack.pop();
 
-    car.RenderCar(drawCount);
-    drawCount += car.VertexCount;
-
-    modelViewMatrix = modelViewStack[0];
-    gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
-
-    car2.RenderCar(drawCount);
-    drawCount += car2.VertexCount;
-
-    modelViewMatrix = modelViewStack[0];
-    gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
-
-    t1.RenderTrafficCone(drawCount);
-    drawCount += t1.VertexCount;
-
-    modelViewMatrix = modelViewStack[0];
-    gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
-
-    t2.RenderTrafficCone(drawCount);
-    drawCount += t2.VertexCount;
+    modelViewStack.push(modelViewMatrix);
+    stopSign.RenderStopSign(drawCount);
+    drawCount += stopSign.VertexCount;
     modelViewMatrix = modelViewStack.pop();
 }
 //#endregion

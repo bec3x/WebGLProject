@@ -4,7 +4,7 @@ class Car {
     #hubcapVertCount;
     #translationMatrix;
 
-    constructor(translationMatrix) {
+    constructor(translationMatrix = mat4()) {
         this.#bodyVertCount = 0;
         this.#wheelVertCount = 0;
         this.#hubcapVertCount = 0;
