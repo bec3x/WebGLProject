@@ -35,6 +35,9 @@ window.onload = function init() {
     stopSign = new StopSign(translate(8, 2, 5));
     stopSign.GenerateStopSign();
 
+    streetLight = new StreetLight(translate(-4,0,-2));
+    streetLight.GenerateStreetLight();
+
     InitBuffers();
     Render();
 }
@@ -110,6 +113,11 @@ const Render = () => {
     modelViewStack.push(modelViewMatrix);
     stopSign.RenderStopSign(drawCount);
     drawCount += stopSign.VertexCount;
+    modelViewMatrix = modelViewStack.pop();
+
+    modelViewStack.push(modelViewMatrix);
+    streetLight.RenderStreetLight(drawCount);
+    drawCount += streetLight.VertexCount;
     modelViewMatrix = modelViewStack.pop();
 }
 //#endregion
