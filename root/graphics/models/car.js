@@ -1,21 +1,33 @@
-var Car = {
-    bodyVertCount: 0,
-    wheelVertCount: 0,
+class Car {
+    #bodyVertCount;
+    #wheelVertCount;
+    #hubcapVertCount;
+    #translationMatrix;
 
-    translationMatrix: mat4(),
+    constructor(translationMatrix) {
+        this.#bodyVertCount = 0;
+        this.#wheelVertCount = 0;
+        this.#hubcapVertCount = 0;
+        this.#translationMatrix = translationMatrix;
 
-    init: function (translationMatrix = mat4()) {
-        this.translationMatrix = translationMatrix;
-        this.GenerateCar();
-    },
+    }
 
-    RenderCar: function (drawCount) {
+    get VertexCount() {
+        return this.#bodyVertCount + (this.#wheelVertCount * 4) + ((this.#hubcapVertCount * 2) * 4);
+    }
+
+    RenderCar(drawCount) {
+        if (drawCount == null) {
+            console.log("CAR: drawCount value was null");
+            return;
+        }
+
         // Render Body
-        modelViewMatrix = mult(modelViewMatrix, mult(this.translationMatrix, FeatureApi.scale4(4, 4, 4)));
+        modelViewMatrix = mult(modelViewMatrix, mult(this.#translationMatrix, FeatureApi.scale4(4, 4, 4)));
         gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
 
-        gl.drawArrays(gl.TRIANGLES, drawCount, this.bodyVertCount);
-        drawCount += this.bodyVertCount;
+        gl.drawArrays(gl.TRIANGLES, drawCount, this.#bodyVertCount);
+        drawCount += this.#bodyVertCount;
 
         // Render Wheels
         for (var i = 0; i < 4; i++) {
@@ -39,32 +51,30 @@ var Car = {
             modelViewMatrix = mult(modelViewMatrix, t);
             gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
 
-            gl.drawArrays(gl.TRIANGLES, drawCount, this.wheelVertCount); drawCount += this.wheelVertCount;
-            gl.drawArrays(gl.TRIANGLE_FAN, drawCount, 100); drawCount += 100;
-            gl.drawArrays(gl.TRIANGLE_FAN, drawCount, 100); drawCount += 100;
+            gl.drawArrays(gl.TRIANGLES, drawCount, this.#wheelVertCount); drawCount += this.#wheelVertCount;
+            gl.drawArrays(gl.TRIANGLE_FAN, drawCount, 100); drawCount += this.#hubcapVertCount;
+            gl.drawArrays(gl.TRIANGLE_FAN, drawCount, 100); drawCount += this.#hubcapVertCount;
 
             modelViewMatrix = modelViewStack.pop();
         }
+    }
 
-        return drawCount;
-    },
-
-    GenerateCar: function () {
-        this.DrawBody();
-        this.DrawCabin();
+    GenerateCar() {
+        this.#DrawBody();
+        this.#DrawCabin();
 
         for (var i = 0; i < 4; i++) {
-            this.DrawWheel(i == 0 ? true : false);
+            this.#DrawWheel(i == 0 ? true : false);
         }
-    },
+    }
 
-    DrawWheel: function (accumulate) {
+    #DrawWheel(accumulate) {
         var radius = .14;
         var steps = 100;
         var angle = 2 * Math.PI / steps;
 
-        topCirclePoints = [];
-        bottomCirclePoints = [];
+        var topCirclePoints = [];
+        var bottomCirclePoints = [];
 
         var wheelColor = FeatureApi.HexToColorVector("#000000");
         for (var i = 0; i < steps; i++) {
@@ -86,15 +96,17 @@ var Car = {
             bottomCirclePoints.push(bottomCircle);
             colors.push(wheelColor);
 
-            if (accumulate)
-                this.wheelVertCount += 6;
+            if (accumulate) {
+                this.#wheelVertCount += 6;
+                this.#hubcapVertCount += 1;
+            }
         }
 
         topCirclePoints.forEach((item) => points.push(item));
         bottomCirclePoints.forEach((item) => points.push(item));
-    },
+    }
 
-    DrawBody: function () {
+    #DrawBody() {
         var vertices = [
             vec4(-0.5, 0.15, -0.4, 1.0),    // A
             vec4(0.5, 0.15, -0.4, 1.0),     // B
@@ -107,10 +119,10 @@ var Car = {
         ];
 
         var baseColor = FeatureApi.HexToColorVector('#a40000');
-        this.DrawBox(vertices, baseColor);
-    },
+        this.#DrawBox(vertices, baseColor);
+    }
 
-    DrawCabin: function () {
+    #DrawCabin() {
         var vertices = [
             vec4(-0.25, 0.3, -0.4, 1),  // A
             vec4(0.25, 0.3, -0.4, 1),   // B
@@ -123,28 +135,26 @@ var Car = {
         ];
 
         var baseColor = FeatureApi.HexToColorVector('#95e1c8');
-        this.DrawBox(vertices, baseColor);
-    },
+        this.#DrawBox(vertices, baseColor);
+    }
 
-    DrawBox: function (vertices, baseColor) {
+    #DrawBox(vertices, baseColor) {
         FeatureApi.Quad(vertices[0], vertices[1], vertices[2], vertices[3], baseColor);
-        this.bodyVertCount += 6;
+        this.#bodyVertCount += 6;
 
         FeatureApi.Quad(vertices[4], vertices[5], vertices[6], vertices[7], baseColor);
-        this.bodyVertCount += 6;
+        this.#bodyVertCount += 6;
 
         FeatureApi.Quad(vertices[0], vertices[4], vertices[5], vertices[1], baseColor);
-        this.bodyVertCount += 6;
+        this.#bodyVertCount += 6;
 
         FeatureApi.Quad(vertices[1], vertices[5], vertices[6], vertices[2], baseColor);
-        this.bodyVertCount += 6;
+        this.#bodyVertCount += 6;
 
         FeatureApi.Quad(vertices[2], vertices[6], vertices[7], vertices[3], baseColor);
-        this.bodyVertCount += 6;
+        this.#bodyVertCount += 6;
 
         FeatureApi.Quad(vertices[3], vertices[7], vertices[4], vertices[0], baseColor);
-        this.bodyVertCount += 6;
-    },
+        this.#bodyVertCount += 6;
+    }
 }
-
-

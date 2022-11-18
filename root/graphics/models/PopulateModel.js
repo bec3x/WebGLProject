@@ -17,6 +17,9 @@ var modelViewStack = [];
 var modelViewMatrix = mat4(), 
     projectionMatrix;
 var modelViewMatrixLoc, projectionMatrixLoc;
+
+var t1, t2;
+var car, car2;
 // #endregion
 
 //#region Main
@@ -24,8 +27,18 @@ window.onload = function init() {
     ConfigureWebGL();
 
     MouseManipulation.init('gl-canvas');
-    Car.init(translate(-2, 0, 0));
-    TrafficCone.init(translate(2, -.3, 0));
+
+    car = new Car(translate(-2, 0, 0));
+    car2 = new Car(translate(-2, 5, 0));
+
+    t1 = new TrafficCone(translate(1, 0, 0));
+    t2 = new TrafficCone(translate(-1, 0, 3));
+    
+    car.GenerateCar();
+    car2.GenerateCar();
+
+    t1.GenerateTrafficCone();
+    t2.GenerateTrafficCone();
 
     InitBuffers();
     Render();
@@ -95,10 +108,26 @@ const Render = () => {
     modelViewStack.push(modelViewMatrix);
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
 
-    drawCount = Car.RenderCar(drawCount);
-    modelViewMatrix = modelViewStack[0];
+    car.RenderCar(drawCount);
+    drawCount += car.VertexCount;
 
-    drawCount = TrafficCone.RenderTrafficCone(drawCount);
+    modelViewMatrix = modelViewStack[0];
+    gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
+
+    car2.RenderCar(drawCount);
+    drawCount += car2.VertexCount;
+
+    modelViewMatrix = modelViewStack[0];
+    gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
+
+    t1.RenderTrafficCone(drawCount);
+    drawCount += t1.VertexCount;
+
+    modelViewMatrix = modelViewStack[0];
+    gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
+
+    t2.RenderTrafficCone(drawCount);
+    drawCount += t2.VertexCount;
     modelViewMatrix = modelViewStack.pop();
 }
 //#endregion
