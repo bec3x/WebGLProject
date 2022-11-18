@@ -17,10 +17,10 @@ class TrafficLight {
     }
 
     #DrawTrafficLight() {
-        var baseColor = FeatureApi.HexToColorVector("#000000");
-        var redColor = FeatureApi.HexToColorVector("#B81D13");
-        var yellowColor = FeatureApi.HexToColorVector("#EFB700");
-        var greenColor = FeatureApi.HexToColorVector("#008450");
+        var baseColor = FeatureApi.HexToColorVector("#666666");
+        var redColor = FeatureApi.HexToColorVector("#FF0000");
+        var yellowColor = FeatureApi.HexToColorVector("#FFFF00");
+        var greenColor = FeatureApi.HexToColorVector("#00FF00");
 
         Primitive.GenerateCube(baseColor);
         this.#vertexCount += Primitive.cubeVertexCount;
@@ -36,7 +36,7 @@ class TrafficLight {
     }
 
     #DrawTrafficPole() {
-        var poleColor = FeatureApi.HexToColorVector("#D3D3D3");
+        var poleColor = FeatureApi.HexToColorVector("#B3B3B3");
 
         for (var i = 0; i < 3; i++) {
             Primitive.GenerateCylinder(poleColor);
