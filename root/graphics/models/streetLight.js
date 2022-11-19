@@ -1,4 +1,4 @@
-class TrafficLight {
+class StreetLight {
     #vertexCount;
     #translationMatrix;
 
@@ -11,12 +11,12 @@ class TrafficLight {
         return this.#vertexCount;
     }
 
-    GenerateTrafficLight() {
-        this.#DrawTrafficLight();
-        this.#DrawTrafficPole();
+    GenerateStreetLight() {
+        this.#DrawStreetLight();
+        this.#DrawStreetPole();
     }
 
-    #DrawTrafficLight() {
+    #DrawStreetLight() {
         var baseColor = FeatureApi.HexToColorVector("#666666");
         var redColor = FeatureApi.HexToColorVector("#FF0000");
         var yellowColor = FeatureApi.HexToColorVector("#FFFF00");
@@ -35,7 +35,7 @@ class TrafficLight {
         this.#vertexCount += Primitive.sphereVertexCount;
     }
 
-    #DrawTrafficPole() {
+    #DrawStreetPole() {
         var poleColor = FeatureApi.HexToColorVector("#B3B3B3");
 
         for (var i = 0; i < 3; i++) {
@@ -90,7 +90,7 @@ class TrafficLight {
         return drawCount;
     }
 
-    #RenderTrafficPole(drawCount) {
+    #RenderStreetPole(drawCount) {
         var matrices;
 
         modelViewStack.push(modelViewMatrix);
@@ -115,7 +115,7 @@ class TrafficLight {
         modelViewMatrix = modelViewStack.pop();
     }
 
-    RenderTrafficLight(drawCount) {
+    RenderStreetLight(drawCount) {
         var matrices;
 
         modelViewStack.push(modelViewMatrix);
@@ -123,7 +123,7 @@ class TrafficLight {
         modelViewMatrix = mult(mult(mult(modelViewMatrix, matrices.t), matrices.r), matrices.s);
         gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
         drawCount = this.#RenderLights(drawCount);
-        this.#RenderTrafficPole(drawCount);
+        this.#RenderStreetPole(drawCount);
         modelViewMatrix = modelViewStack.pop();
     }
 }

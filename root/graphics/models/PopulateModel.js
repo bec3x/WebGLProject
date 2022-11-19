@@ -31,6 +31,9 @@ window.onload = function init() {
     busStop = new BusStop();
     busStop.GenerateBusStop();
 
+    streetLight = new StreetLight(translate(-4,0,-2));
+    streetLight.GenerateStreetLight();
+
     InitBuffers();
     Render();
 }
@@ -101,6 +104,11 @@ const Render = () => {
     modelViewStack.push(modelViewMatrix);
     busStop.RenderBusStop(drawCount);
     drawCount += busStop.VertexCount;
+    modelViewMatrix = modelViewStack.pop();
+
+    modelViewStack.push(modelViewMatrix);
+    streetLight.RenderStreetLight(drawCount);
+    drawCount += streetLight.VertexCount;
     modelViewMatrix = modelViewStack.pop();
 }
 //#endregion
