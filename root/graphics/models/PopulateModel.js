@@ -29,8 +29,6 @@ var materialDiffuse = vec4(1.0, 0.1, 0.1, 1.0);
 var materialSpecular = vec4(1.0, 1.0, 1.0, 1.0);
 var materialShininess = 50.0;
 
-var vertexCount = 0;
-
 // #endregion
 
 var models = [];
@@ -41,6 +39,7 @@ window.onload = function init() {
 
     MouseManipulation.init('gl-canvas');
 
+    // Creating list of models
     models = [
         new BusStop(),
         new StreetLight(translate(-4, 0, -2)),
@@ -50,9 +49,9 @@ window.onload = function init() {
         new TrafficLight(translate(0, 0, 4)),
     ];
 
+    // Generate the points for each model
     models.forEach((model) => {
         model.Generate();
-        vertexCount += model.VertexCount;
     })
 
     InitBuffers();
@@ -138,42 +137,12 @@ const Render = () => {
     modelViewMatrix = lookAt(eye, at, up);
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
 
+    // Render each model
     models.forEach((model) => {
         modelViewStack.push(modelViewMatrix);
         model.Render(drawCount);
         drawCount += model.VertexCount;
         modelViewMatrix = modelViewStack.pop();
     });
-
-    // modelViewStack.push(modelViewMatrix);
-    // busStop.Render(drawCount);
-    // drawCount += busStop.VertexCount;
-    // modelViewMatrix = modelViewStack.pop();
-
-    // modelViewStack.push(modelViewMatrix);
-    // streetLight.Render(drawCount);
-    // drawCount += streetLight.VertexCount;
-    // modelViewMatrix = modelViewStack.pop();
-
-    // modelViewStack.push(modelViewMatrix);
-    // cone.Render(drawCount);
-    // drawCount += cone.VertexCount;
-    // modelViewMatrix = modelViewStack.pop();
-
-    // modelViewStack.push(modelViewMatrix);
-    // car.Render(drawCount);
-    // drawCount += car.VertexCount;
-    // modelViewMatrix = modelViewStack.pop();
-
-    // modelViewStack.push(modelViewMatrix);
-    // stopSign.Render(drawCount);
-    // drawCount += stopSign.VertexCount;
-    // modelViewMatrix = modelViewStack.pop();
-
-    // modelViewStack.push(modelViewMatrix);
-    // trafficLight.Render(drawCount);
-    // drawCount += trafficLight.VertexCount;
-    // modelViewMatrix = modelViewStack.pop();
-
 }
 //#endregion
