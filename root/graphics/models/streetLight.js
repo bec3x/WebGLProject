@@ -11,7 +11,7 @@ class StreetLight {
         return this.#vertexCount;
     }
 
-    GenerateStreetLight() {
+    Generate() {
         this.#DrawStreetLight();
         this.#DrawStreetPole();
     }
@@ -21,7 +21,7 @@ class StreetLight {
         var yellowWhiteColor = FeatureApi.HexToColorVector("#f7e98e");
 
         Primitive.GenerateCone(baseColor);
-        this.#vertexCount += Primitive.cubeVertexCount;
+        this.#vertexCount += Primitive.coneVertexCount;
 
         Primitive.GenerateSphere(yellowWhiteColor);
         this.#vertexCount += Primitive.sphereVertexCount;
@@ -84,7 +84,7 @@ class StreetLight {
         modelViewMatrix = modelViewStack.pop();
     }
 
-    RenderStreetLight(drawCount) {
+    Render(drawCount) {
         var matrices;
 
         modelViewStack.push(modelViewMatrix);

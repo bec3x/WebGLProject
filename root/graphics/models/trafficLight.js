@@ -11,7 +11,7 @@ class TrafficLight {
         return this.#vertexCount;
     }
 
-    GenerateTrafficLight() {
+    Generate() {
         this.#DrawTrafficLight();
         this.#DrawTrafficPole();
     }
@@ -115,7 +115,7 @@ class TrafficLight {
         modelViewMatrix = modelViewStack.pop();
     }
 
-    RenderTrafficLight(drawCount) {
+    Render(drawCount) {
         var matrices;
 
         modelViewStack.push(modelViewMatrix);

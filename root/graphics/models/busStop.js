@@ -21,14 +21,14 @@ class BusStop {
         return this.#vertexCount;
     }
 
-    GenerateBusStop() {
+    Generate() {
         this.#GenerateCover();
         this.#vertexCount += this.#coverVertexCount;
 
         this.#GenerateVestibule();
     }
 
-    RenderBusStop(drawCount) {
+    Render(drawCount) {
         modelViewMatrix = mult(modelViewMatrix, this.#translationMatrix);
 
         modelViewStack.push(modelViewMatrix);

@@ -14,13 +14,26 @@ var colors = [];
 var normals = [];
 
 var modelViewStack = [];
-var modelViewMatrix = mat4(), 
+var modelViewMatrix = mat4(),
     projectionMatrix;
 var modelViewMatrixLoc, projectionMatrixLoc;
+var ambientProduct, diffuseProduct, specularProduct;
+
+var lightPosition = vec4(0, 0, 0, 0.0);
+var lightAmbient = vec4(0.2, 0.2, 0.2, 1.0);
+var lightDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
+var lightSpecular = vec4(1.0, 1.0, 1.0, 1.0);
+
+var materialAmbient = vec4(1.0, 0.5, 0.5, 1.0);
+var materialDiffuse = vec4(1.0, 0.1, 0.1, 1.0);
+var materialSpecular = vec4(1.0, 1.0, 1.0, 1.0);
+var materialShininess = 50.0;
+
+var vertexCount = 0;
 
 // #endregion
 
-var busStop;
+var models = [];
 
 //#region Main
 window.onload = function init() {
@@ -28,11 +41,19 @@ window.onload = function init() {
 
     MouseManipulation.init('gl-canvas');
 
-    busStop = new BusStop();
-    busStop.GenerateBusStop();
+    models = [
+        new BusStop(),
+        new StreetLight(translate(-4, 0, -2)),
+        new TrafficCone(translate(-2, 0, -2)),
+        new Car(translate(4, 0, 2)),
+        new StopSign(translate(4, 0, 1)),
+        new TrafficLight(translate(0, 0, 4)),
+    ];
 
-    streetLight = new StreetLight(translate(-4,0,-2));
-    streetLight.GenerateStreetLight();
+    models.forEach((model) => {
+        model.Generate();
+        vertexCount += model.VertexCount;
+    })
 
     InitBuffers();
     Render();
@@ -85,6 +106,22 @@ const InitBuffers = () => {
     gl.vertexAttribPointer(vColor, 4, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(vColor);
 
+    ambientProduct = mult(lightAmbient, materialAmbient);
+    diffuseProduct = mult(lightDiffuse, materialDiffuse);
+    specularProduct = mult(lightSpecular, materialSpecular);
+
+    gl.uniform4fv(gl.getUniformLocation(program, "ambientProduct"),
+        flatten(ambientProduct));
+    gl.uniform4fv(gl.getUniformLocation(program, "diffuseProduct"),
+        flatten(diffuseProduct));
+    gl.uniform4fv(gl.getUniformLocation(program, "specularProduct"),
+        flatten(specularProduct));
+    gl.uniform4fv(gl.getUniformLocation(program, "lightPosition"),
+        flatten(lightPosition));
+
+    gl.uniform1f(gl.getUniformLocation(program,
+        "shininess"), materialShininess);
+
     modelViewMatrixLoc = gl.getUniformLocation(program, "modelViewMatrix");
     projectionMatrixLoc = gl.getUniformLocation(program, "projectionMatrix");
 }
@@ -101,14 +138,42 @@ const Render = () => {
     modelViewMatrix = lookAt(eye, at, up);
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
 
-    modelViewStack.push(modelViewMatrix);
-    busStop.RenderBusStop(drawCount);
-    drawCount += busStop.VertexCount;
-    modelViewMatrix = modelViewStack.pop();
+    models.forEach((model) => {
+        modelViewStack.push(modelViewMatrix);
+        model.Render(drawCount);
+        drawCount += model.VertexCount;
+        modelViewMatrix = modelViewStack.pop();
+    });
 
-    modelViewStack.push(modelViewMatrix);
-    streetLight.RenderStreetLight(drawCount);
-    drawCount += streetLight.VertexCount;
-    modelViewMatrix = modelViewStack.pop();
+    // modelViewStack.push(modelViewMatrix);
+    // busStop.Render(drawCount);
+    // drawCount += busStop.VertexCount;
+    // modelViewMatrix = modelViewStack.pop();
+
+    // modelViewStack.push(modelViewMatrix);
+    // streetLight.Render(drawCount);
+    // drawCount += streetLight.VertexCount;
+    // modelViewMatrix = modelViewStack.pop();
+
+    // modelViewStack.push(modelViewMatrix);
+    // cone.Render(drawCount);
+    // drawCount += cone.VertexCount;
+    // modelViewMatrix = modelViewStack.pop();
+
+    // modelViewStack.push(modelViewMatrix);
+    // car.Render(drawCount);
+    // drawCount += car.VertexCount;
+    // modelViewMatrix = modelViewStack.pop();
+
+    // modelViewStack.push(modelViewMatrix);
+    // stopSign.Render(drawCount);
+    // drawCount += stopSign.VertexCount;
+    // modelViewMatrix = modelViewStack.pop();
+
+    // modelViewStack.push(modelViewMatrix);
+    // trafficLight.Render(drawCount);
+    // drawCount += trafficLight.VertexCount;
+    // modelViewMatrix = modelViewStack.pop();
+
 }
 //#endregion

@@ -11,7 +11,7 @@ class StopSign {
         return this.#vertexCount;
     }
 
-    GenerateStopSign() {
+    Generate() {
         this.#GenerateStopSignPole();
         this.#GenerateSign();
     }
@@ -163,7 +163,7 @@ class StopSign {
         this.#vertexCount += 24;
     }
 
-    RenderStopSign(drawCount) {
+    Render(drawCount) {
         modelViewMatrix = mult(modelViewMatrix, this.#translationMatrix);
         gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
         gl.drawArrays(gl.TRIANGLES, drawCount, this.#vertexCount);

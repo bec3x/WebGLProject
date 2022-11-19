@@ -16,7 +16,7 @@ class Car {
         return this.#bodyVertCount + (this.#wheelVertCount * 4) + ((this.#hubcapVertCount * 2) * 4);
     }
 
-    RenderCar(drawCount) {
+    Render(drawCount) {
         if (drawCount == null) {
             console.log("CAR: drawCount value was null");
             return;
@@ -59,7 +59,7 @@ class Car {
         }
     }
 
-    GenerateCar() {
+    Generate() {
         this.#DrawBody();
         this.#DrawCabin();
 

@@ -31,7 +31,7 @@ class TrafficCone {
         ];
     }
 
-    GenerateTrafficCone() {
+    Generate() {
         this.#GenerateConeBase();
         this.#GenerateCone();
     }
@@ -76,7 +76,7 @@ class TrafficCone {
         }
     }
 
-    RenderTrafficCone(drawCount) {
+    Render(drawCount) {
         modelViewMatrix = mult(modelViewMatrix, mult(this.#translationMatrix, FeatureApi.scale4(1.1, 1.1, 1.1)));
         gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
 
