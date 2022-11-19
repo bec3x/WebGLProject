@@ -95,21 +95,21 @@ class TrafficLight {
 
         modelViewStack.push(modelViewMatrix);
         matrices = this.#CreateMatrices([1/8,3,1/8], [0,0,1,0], [0,0,0]);
-        modelViewMatrix = mult(mult(mult(modelViewMatrix, matrices.t), matrices.r), matrices.s);
+        modelViewMatrix = mult(mult(mult(mult(modelViewMatrix, this.#translationMatrix), matrices.t), matrices.r), matrices.s);
         gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
         drawCount = Primitive.DrawCylinder(drawCount);
         modelViewMatrix = modelViewStack.pop();
 
         modelViewStack.push(modelViewMatrix);
         matrices = this.#CreateMatrices([1/8,2,1/8], [90,1,0,0], [0,5.5,0]);
-        modelViewMatrix = mult(mult(mult(modelViewMatrix, matrices.t), matrices.r), matrices.s);
+        modelViewMatrix = mult(mult(mult(mult(modelViewMatrix, this.#translationMatrix), matrices.t), matrices.r), matrices.s);
         gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
         drawCount = Primitive.DrawCylinder(drawCount);
         modelViewMatrix = modelViewStack.pop();
 
         modelViewStack.push(modelViewMatrix);
         matrices = this.#CreateMatrices([1/8,1/3,1/8], [0,0,1,0], [0,4.75,3]);
-        modelViewMatrix = mult(mult(mult(modelViewMatrix, matrices.t), matrices.r), matrices.s);
+        modelViewMatrix = mult(mult(mult(mult(modelViewMatrix, this.#translationMatrix), matrices.t), matrices.r), matrices.s);
         gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
         drawCount = Primitive.DrawCylinder(drawCount);
         modelViewMatrix = modelViewStack.pop();

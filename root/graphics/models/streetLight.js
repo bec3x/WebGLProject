@@ -18,27 +18,19 @@ class StreetLight {
 
     #DrawStreetLight() {
         var baseColor = FeatureApi.HexToColorVector("#666666");
-        var redColor = FeatureApi.HexToColorVector("#FF0000");
-        var yellowColor = FeatureApi.HexToColorVector("#FFFF00");
-        var greenColor = FeatureApi.HexToColorVector("#00FF00");
+        var yellowWhiteColor = FeatureApi.HexToColorVector("#f7e98e");
 
-        Primitive.GenerateCube(baseColor);
+        Primitive.GenerateCone(baseColor);
         this.#vertexCount += Primitive.cubeVertexCount;
 
-        Primitive.GenerateSphere(redColor);
-        this.#vertexCount += Primitive.sphereVertexCount;
-
-        Primitive.GenerateSphere(yellowColor);
-        this.#vertexCount += Primitive.sphereVertexCount;
-
-        Primitive.GenerateSphere(greenColor);
+        Primitive.GenerateSphere(yellowWhiteColor);
         this.#vertexCount += Primitive.sphereVertexCount;
     }
 
     #DrawStreetPole() {
         var poleColor = FeatureApi.HexToColorVector("#B3B3B3");
 
-        for (var i = 0; i < 3; i++) {
+        for (var i = 0; i < 2; i++) {
             Primitive.GenerateCylinder(poleColor);
             this.#vertexCount += Primitive.cylinderVertexCount;
         }
@@ -55,37 +47,21 @@ class StreetLight {
     #RenderLights(drawCount) {
         var matrices;
 
-        // Yellow Box
+        // Cone
         modelViewStack.push(modelViewMatrix);
-        matrices = this.#CreateMatrices([1/2, 1, 1/2], [90, 0, 1, 0], [0, 4.5, 3]);
+        matrices = this.#CreateMatrices([1/2.5, 1/2.5, 1/2.5], [90, 0, 1, 0], [0, 5.2, 1.75]);
         modelViewMatrix = mult(mult(mult(mult(modelViewMatrix, this.#translationMatrix), matrices.t), matrices.r), matrices.s);
         gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
-        drawCount = Primitive.DrawCube(drawCount);
+        drawCount = Primitive.DrawCone(drawCount);
         modelViewMatrix = modelViewStack.pop();
 
-        // Red Light
+        // Light
         modelViewStack.push(modelViewMatrix);
-        matrices = this.#CreateMatrices([.125, .125, .125], [90,0,1,0], [-0.25,4.8,3]);
+        matrices = this.#CreateMatrices([.25, .25, .25], [90,0,1,0], [0,5.1,1.75]);
         modelViewMatrix = mult(mult(mult(mult(modelViewMatrix, this.#translationMatrix), matrices.t), matrices.r), matrices.s);
         gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
         drawCount = Primitive.DrawSphere(drawCount);
         modelViewMatrix = modelViewStack.pop();
-
-        // Yellow Light
-        modelViewStack.push(modelViewMatrix);
-        matrices = this.#CreateMatrices([.125, .125, .125], [90,0,1,0], [-0.25,4.5,3]);
-        modelViewMatrix = mult(mult(mult(mult(modelViewMatrix, this.#translationMatrix), matrices.t), matrices.r), matrices.s);
-        gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
-        drawCount = Primitive.DrawSphere(drawCount);
-        modelViewMatrix = modelViewStack.pop();
-
-        // Green Light
-        modelViewStack.push(modelViewMatrix); 
-        matrices = this.#CreateMatrices([.125, .125, .125], [90,0,1,0], [-0.25,4.2,3]);
-        modelViewMatrix = mult(mult(mult(mult(modelViewMatrix, this.#translationMatrix), matrices.t), matrices.r), matrices.s);
-        gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
-        drawCount = Primitive.DrawSphere(drawCount);
-        modelViewMatrix = modelViewStack.pop(); 
         
         return drawCount;
     }
@@ -95,21 +71,14 @@ class StreetLight {
 
         modelViewStack.push(modelViewMatrix);
         matrices = this.#CreateMatrices([1/8,3,1/8], [0,0,1,0], [0,0,0]);
-        modelViewMatrix = mult(mult(mult(modelViewMatrix, matrices.t), matrices.r), matrices.s);
+        modelViewMatrix = mult(mult(mult(mult(modelViewMatrix, this.#translationMatrix), matrices.t), matrices.r), matrices.s);
         gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
         drawCount = Primitive.DrawCylinder(drawCount);
         modelViewMatrix = modelViewStack.pop();
 
         modelViewStack.push(modelViewMatrix);
-        matrices = this.#CreateMatrices([1/8,2,1/8], [90,1,0,0], [0,5.5,0]);
-        modelViewMatrix = mult(mult(mult(modelViewMatrix, matrices.t), matrices.r), matrices.s);
-        gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
-        drawCount = Primitive.DrawCylinder(drawCount);
-        modelViewMatrix = modelViewStack.pop();
-
-        modelViewStack.push(modelViewMatrix);
-        matrices = this.#CreateMatrices([1/8,1/3,1/8], [0,0,1,0], [0,4.75,3]);
-        modelViewMatrix = mult(mult(mult(modelViewMatrix, matrices.t), matrices.r), matrices.s);
+        matrices = this.#CreateMatrices([1/8,1,1/8], [90,1,0,0], [0,5.5,0]);
+        modelViewMatrix = mult(mult(mult(mult(modelViewMatrix, this.#translationMatrix), matrices.t), matrices.r), matrices.s);
         gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
         drawCount = Primitive.DrawCylinder(drawCount);
         modelViewMatrix = modelViewStack.pop();
