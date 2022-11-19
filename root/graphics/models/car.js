@@ -52,8 +52,8 @@ class Car {
             gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
 
             gl.drawArrays(gl.TRIANGLES, drawCount, this.#wheelVertCount); drawCount += this.#wheelVertCount;
-            gl.drawArrays(gl.TRIANGLE_FAN, drawCount, 100); drawCount += this.#hubcapVertCount;
-            gl.drawArrays(gl.TRIANGLE_FAN, drawCount, 100); drawCount += this.#hubcapVertCount;
+            gl.drawArrays(gl.TRIANGLE_FAN, drawCount, this.#hubcapVertCount); drawCount += this.#hubcapVertCount;
+            gl.drawArrays(gl.TRIANGLE_FAN, drawCount, this.#hubcapVertCount); drawCount += this.#hubcapVertCount;
 
             modelViewMatrix = modelViewStack.pop();
         }

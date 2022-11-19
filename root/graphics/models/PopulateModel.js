@@ -20,8 +20,7 @@ var modelViewMatrixLoc, projectionMatrixLoc;
 
 // #endregion
 
-var trafficLight;
-var stopSign;
+var busStop;
 
 //#region Main
 window.onload = function init() {
@@ -29,11 +28,8 @@ window.onload = function init() {
 
     MouseManipulation.init('gl-canvas');
 
-    trafficLight = new TrafficLight();
-    trafficLight.GenerateTrafficLight();
-
-    stopSign = new StopSign(translate(8, 2, 5));
-    stopSign.GenerateStopSign();
+    busStop = new BusStop();
+    busStop.GenerateBusStop();
 
     InitBuffers();
     Render();
@@ -87,13 +83,13 @@ const InitBuffers = () => {
     gl.enableVertexAttribArray(vColor);
 
     modelViewMatrixLoc = gl.getUniformLocation(program, "modelViewMatrix");
-    projectMatrixLoc = gl.getUniformLocation(program, "projectionMatrix");
+    projectionMatrixLoc = gl.getUniformLocation(program, "projectionMatrix");
 }
 
 const Render = () => {
     var drawCount = 0;
     gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.uniformMatrix4fv(projectMatrixLoc, false, flatten(projectionMatrix));
+    gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(projectionMatrix));
 
     eye = vec3(MouseManipulation.radius * Math.cos(MouseManipulation.phi),
         MouseManipulation.radius * Math.sin(MouseManipulation.theta),
@@ -103,13 +99,8 @@ const Render = () => {
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
 
     modelViewStack.push(modelViewMatrix);
-    trafficLight.RenderTrafficLight(drawCount);
-    drawCount += trafficLight.VertexCount;
-    modelViewMatrix = modelViewStack.pop();
-
-    modelViewStack.push(modelViewMatrix);
-    stopSign.RenderStopSign(drawCount);
-    drawCount += stopSign.VertexCount;
+    busStop.RenderBusStop(drawCount);
+    drawCount += busStop.VertexCount;
     modelViewMatrix = modelViewStack.pop();
 }
 //#endregion

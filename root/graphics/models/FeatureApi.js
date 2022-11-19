@@ -1,4 +1,6 @@
 var FeatureApi = {
+
+    // before change a, b, d, d, b, c
     Quad: function (a, b, c, d, color) {
         var t1 = subtract(b, a);
         var t2 = subtract(c, d);
@@ -14,19 +16,19 @@ var FeatureApi = {
         colors.push(color);
         normals.push(normal);
 
-        points.push(d);
+        points.push(c);
         colors.push(color);
         normals.push(normal);
 
-        points.push(d);
-        colors.push(color);
-        normals.push(normal);
-
-        points.push(b);
+        points.push(a);
         colors.push(color);
         normals.push(normal);
 
         points.push(c);
+        colors.push(color);
+        normals.push(normal);
+
+        points.push(d);
         colors.push(color);
         normals.push(normal);
     },
@@ -49,6 +51,31 @@ var FeatureApi = {
         points.push(c);
         colors.push(color);
         normals.push(normal);
+    },
+
+    Polygon: function (vertices, indices, color) {
+        var M = indices.length;
+        var normal = this.Newell(vertices, indices);
+
+        var prev = 1;
+        var next = 2;
+
+        for (var i = 0; i < M - 2; i++) {
+            points.push(vertices[indices[0]]);
+            normals.push(normal);
+            colors.push(color);
+
+            points.push(vertices[indices[prev]]);
+            normals.push(normal);
+            colors.push(color);
+
+            points.push(vertices[indices[next]]);
+            normals.push(normal);
+            colors.push(color);
+
+            prev = next;
+            next = next + 1;
+        }
     },
 
     hexToDecimal: function (hex) {
@@ -80,6 +107,26 @@ var FeatureApi = {
         result[2][2] = c;
         return result;
     },
+
+    Newell: function (vertices, indices) {
+        var L = indices.length;
+        var x = 0,
+            y = 0,
+            z = 0;
+        var index, nextIndex;
+
+        for (var i = 0; i < L; i++) {
+            index = indices[i];
+            nextIndex = indices[(i + 1) % L];
+
+            x += (vertices[index][1] - vertices[nextIndex][1]) * (vertices[index][2] + vertices[nextIndex][2]);
+            y += (vertices[index][2] - vertices[nextIndex][2]) * (vertices[index][0] + vertices[nextIndex][0]);
+            z += (vertices[index][0] - vertices[nextIndex][0]) * (vertices[index][1] + vertices[nextIndex][1]);
+        }
+
+        return (normalize(vec3(x, y, z)));
+    }
+
 }
 
 var MouseManipulation = {
