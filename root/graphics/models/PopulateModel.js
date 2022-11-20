@@ -39,14 +39,41 @@ window.onload = function init() {
 
     MouseManipulation.init('gl-canvas');
 
+    var height = -15.5;
+
     // Creating list of models
     models = [
-        new BusStop(),
-        new StreetLight(translate(-4, 0, -2)),
-        new TrafficCone(translate(-2, 0, -2)),
-        new Car(translate(4, 0, 2)),
-        new StopSign(translate(4, 0, 1)),
-        new TrafficLight(translate(0, 0, 4)),
+        // Main Road
+        new Road(),
+        // Bus Stop
+        new BusStop(translate(10,height,-5)),
+        // Left Road Side for Street Lights
+        new StreetLight(mult(translate(-12, height, -4.5),rotate(0,0,1,0))),
+        new StreetLight(mult(translate(-24, height, -4.5),rotate(0,0,1,0))),
+        new StreetLight(mult(translate(-12, height, 4.5),rotate(180,0,1,0))),
+        new StreetLight(mult(translate(-24, height, 4.5),rotate(180,0,1,0))),
+        // Right Road Side for Street Lights
+        new StreetLight(mult(translate(14, height, -4.5),rotate(0,0,1,0))),
+        new StreetLight(mult(translate(26, height, -4.5),rotate(0,0,1,0))),
+        new StreetLight(mult(translate(14, height, 4.5),rotate(180,0,1,0))),
+        new StreetLight(mult(translate(26, height, 4.5),rotate(180,0,1,0))),
+        // Bottom Road Side for Street Lights
+        new StreetLight(mult(translate(-4.5, height, 12),rotate(90,0,1,0))),
+        new StreetLight(mult(translate(-4.5, height, 24),rotate(90,0,1,0))),
+        new StreetLight(mult(translate(4.5, height, 12),rotate(270,0,1,0))),
+        new StreetLight(mult(translate(4.5, height, 24),rotate(270,0,1,0))),
+        // Top Road Side for Traffic Cones
+        new TrafficCone(translate(3.5, height, -4.5)),
+        new TrafficCone(translate(1.5, height, -4.5)),
+        new TrafficCone(translate(-1.5, height, -4.5)),
+        new TrafficCone(translate(-3.5, height, -4.5)),
+        // Car
+        new Car(translate(-25, height + 0.5, 2)),
+        // Stop Sign
+        new StopSign(translate(4.5, height, 7)),
+        // Traffic Lights on each corner of the Road
+        new TrafficLight(mult(translate(-4.5, height, -4.5),rotate(0,0,1,0))),
+        new TrafficLight(mult(translate(4.5, height, 4.5),rotate(180,0,1,0))),
     ];
 
     // Generate the points for each model
@@ -79,7 +106,7 @@ const InitBuffers = () => {
     gl.clearColor(1, 1, 1, 1);
 
     viewerPos = vec3(4.0, 4.0, 4.0);
-    projectionMatrix = ortho(-8, 8, -8, 8, -20, 20);
+    projectionMatrix = ortho(-32, 32, -32, 32, -32, 32);
 
     var nBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, nBuffer);

@@ -88,7 +88,7 @@ class StreetLight {
         var matrices;
 
         modelViewStack.push(modelViewMatrix);
-        matrices = this.#CreateMatrices([1,1,1],[90,0,1,0],[0,0,0]);
+        matrices = this.#CreateMatrices([1,1,1],[0,0,1,0],[0,0,0]);
         modelViewMatrix = mult(mult(mult(modelViewMatrix, matrices.t), matrices.r), matrices.s);
         gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
         drawCount = this.#RenderLights(drawCount);
