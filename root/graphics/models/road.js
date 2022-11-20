@@ -35,18 +35,18 @@ class Road {
         var yellowColor = FeatureApi.HexToColorVector("#f7b500");
         var a,b,c,d;
 
-        a = vec4(-32,this.#height,4);
-        b = vec4(-32,this.#height,-4);
-        c = vec4(32,this.#height,-4);
-        d = vec4(32,this.#height,4);
+        a = vec4(-32,this.#height + 0.01,4);
+        b = vec4(-32,this.#height + 0.01,-4);
+        c = vec4(32,this.#height + 0.01,-4);
+        d = vec4(32,this.#height + 0.01,4);
 
         FeatureApi.Quad(a,b,c,d,roadColor);
         this.#vertexCount += 6;
 
-        a = vec4(-4,this.#height,32);
-        b = vec4(-4,this.#height,-32);
-        c = vec4(4,this.#height,-32);
-        d = vec4(4,this.#height,32);
+        a = vec4(-4,this.#height + 0.01,32);
+        b = vec4(-4,this.#height + 0.01,-32);
+        c = vec4(4,this.#height + 0.01,-32);
+        d = vec4(4,this.#height + 0.01,32);
 
         FeatureApi.Quad(a,b,c,d,roadColor);
         this.#vertexCount += 6;
