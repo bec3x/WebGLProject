@@ -4,7 +4,7 @@ class Road {
 
     constructor() {
         this.#vertexCount = 0;
-        this.#height = -16;
+        this.#height = -0.1;
     }
 
     get VertexCount() {
@@ -13,11 +13,14 @@ class Road {
 
     Generate() {
         this.#DrawRoad();
-        this.#DrawSidewalk();
+        
+        // Sidewalk currently being used for world plane
+        // changed to green to look like grass
+        this.#DrawSidewalk(); 
     }
 
     #DrawSidewalk() {
-        var baseColor = FeatureApi.HexToColorVector("#D8D8D8");
+        var baseColor = FeatureApi.HexToColorVector("#265D07");
         var a,b,c,d;
         var width = 32;
 

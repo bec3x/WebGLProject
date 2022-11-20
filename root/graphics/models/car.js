@@ -3,6 +3,11 @@ class Car {
     #wheelVertCount;
     #hubcapVertCount;
     #translationMatrix;
+    #carAnimated = false;
+    #carStepCount = 0;
+    #CAR_SPEED = 200;
+    #location;
+    #startLocation;
 
     constructor(translationMatrix = mat4()) {
         this.#bodyVertCount = 0;
@@ -10,16 +15,57 @@ class Car {
         this.#hubcapVertCount = 0;
         this.#translationMatrix = translationMatrix;
 
+        this.#startLocation = {
+            x: this.#translationMatrix[0][3],
+            y: this.#translationMatrix[1][3],
+            z: this.#translationMatrix[2][3],
+
+        };
+
+        this.#location = {
+            x: this.#translationMatrix[0][3],
+            y: this.#translationMatrix[1][3],
+            z: this.#translationMatrix[2][3],
+        };
     }
 
     get VertexCount() {
         return this.#bodyVertCount + (this.#wheelVertCount * 4) + ((this.#hubcapVertCount * 2) * 4);
     }
 
+    get CarAnimated() {
+        return this.#carAnimated;
+    }
+
+    set CarAnimated(value) {
+        this.#carAnimated = value;
+    }
+
     Render(drawCount) {
         if (drawCount == null) {
             console.log("CAR: drawCount value was null");
             return;
+        }
+
+        if (this.#carAnimated) {
+            if (this.#carStepCount < this.#CAR_SPEED) {
+                var deltaX = (62 - this.#location.x) / this.#CAR_SPEED;
+
+                this.#translationMatrix = translate(this.#location.x, this.#location.y, this.#location.z);
+                
+                this.#location.x = this.#location.x + deltaX;
+                this.#carStepCount++;
+            }
+            else {                
+                this.#carAnimated = false;
+                this.#carStepCount = 0;
+            }
+        }
+        else {
+            this.#translationMatrix = translate(this.#startLocation.x, this.#startLocation.y, this.#startLocation.z);
+            this.#location.x = this.#startLocation.x;
+            this.#location.y = this.#startLocation.y;
+            this.#location.z = this.#startLocation.z;
         }
 
         // Render Body
@@ -30,31 +76,32 @@ class Car {
         drawCount += this.#bodyVertCount;
 
         // Render Wheels
+        var s, r, t;
+        s = FeatureApi.scale4(0.14, 0.05, 0.14);
+        r = rotate(90, 1, 0, 0);
         for (var i = 0; i < 4; i++) {
             modelViewStack.push(modelViewMatrix);
-            var t;
+            
             switch (i) {
                 case 0:
-                    t = translate(0.32, -.07, 0.37);
+                    t = translate(0.32, -.07, 0.32);
                     break;
                 case 1:
                     t = translate(0.32, -.07, -0.42);
                     break;
                 case 2:
-                    t = translate(-0.32, -.07, 0.37);
+                    t = translate(-0.32, -.07, 0.32);
                     break;
                 case 3:
                     t = translate(-0.32, -.07, -0.42);
                     break;
             }
 
-            modelViewMatrix = mult(modelViewMatrix, t);
+            modelViewMatrix = mult(mult(mult(modelViewMatrix, t), r), s);
             gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
 
-            gl.drawArrays(gl.TRIANGLES, drawCount, this.#wheelVertCount); drawCount += this.#wheelVertCount;
-            gl.drawArrays(gl.TRIANGLE_FAN, drawCount, this.#hubcapVertCount); drawCount += this.#hubcapVertCount;
-            gl.drawArrays(gl.TRIANGLE_FAN, drawCount, this.#hubcapVertCount); drawCount += this.#hubcapVertCount;
-
+            Primitive.DrawCylinder(drawCount);
+            drawCount += this.#wheelVertCount;
             modelViewMatrix = modelViewStack.pop();
         }
     }
@@ -69,41 +116,11 @@ class Car {
     }
 
     #DrawWheel(accumulate) {
-        var radius = .14;
-        var steps = 100;
-        var angle = 2 * Math.PI / steps;
-
-        var topCirclePoints = [];
-        var bottomCirclePoints = [];
-
         var wheelColor = FeatureApi.HexToColorVector("#000000");
-        for (var i = 0; i < steps; i++) {
-            var theta = angle * i;
-            var nextTheta = angle * (i + 1);
-
-            var a = vec4(radius * Math.cos(theta), radius * Math.sin(theta), .05, 1);
-            var b = vec4(radius * Math.cos(theta), radius * Math.sin(theta), 0, 1);
-            var c = vec4(radius * Math.cos(nextTheta), radius * Math.sin(nextTheta), 0, 1);
-            var d = vec4(radius * Math.cos(nextTheta), radius * Math.sin(nextTheta), .05, 1);
-
-            FeatureApi.Quad(a, b, c, d, wheelColor);
-
-            var topCircle = vec4(radius * Math.cos(theta), radius * Math.sin(theta), .05, 1);
-            topCirclePoints.push(topCircle);
-            colors.push(wheelColor);
-
-            var bottomCircle = vec4(radius * Math.cos(theta), radius * Math.sin(theta), 0, 1);
-            bottomCirclePoints.push(bottomCircle);
-            colors.push(wheelColor);
-
-            if (accumulate) {
-                this.#wheelVertCount += 6;
-                this.#hubcapVertCount += 1;
-            }
+        Primitive.GenerateCylinder(wheelColor);
+        if (accumulate) {
+            this.#wheelVertCount += Primitive.cylinderVertexCount;
         }
-
-        topCirclePoints.forEach((item) => points.push(item));
-        bottomCirclePoints.forEach((item) => points.push(item));
     }
 
     #DrawBody() {

@@ -4,7 +4,7 @@
 */
 var canvas, program, gl;
 
-var eye = [1, 0.5, 1];
+var eye = [1, .5, 1];
 var at = [0, 0, 0];
 var up = [0, 1, 0];
 
@@ -32,6 +32,7 @@ var materialShininess = 50.0;
 // #endregion
 
 var models = [];
+var car;
 
 //#region Main
 window.onload = function init() {
@@ -39,7 +40,7 @@ window.onload = function init() {
 
     MouseManipulation.init('gl-canvas');
 
-    var height = -15.9;
+    var height = 0;
 
     // Creating list of models
     models = [
@@ -76,13 +77,44 @@ window.onload = function init() {
         new TrafficLight(mult(translate(4.5, height, 4.5),rotate(180,0,1,0))),
     ];
 
+    car = GetCarModel();
+    // Idea: After all points have been generated.. pass the models to the car, so that collision can be detected?
     // Generate the points for each model
     models.forEach((model) => {
         model.Generate();
-    })
+    });
+
+    RegisterEvents();
 
     InitBuffers();
     Render();
+}
+//#endregion
+
+//#region General Functions
+const GetCarModel = () =>  {
+    var carModels = models.filter((model) => {
+        return model instanceof Car;
+    });
+
+    if (carModels.length == 0) {
+        return;
+    }
+
+    return carModels[0]; // assumes the first car is the car that will be animated
+}
+
+const RegisterEvents = () => {
+    document.addEventListener('keydown', function(event) {
+        if (event.name === 'Shift') {
+            return;
+        }
+
+        if (event.code === 'KeyA' || (event.shiftKey && event.code === 'KeyA')) {
+            if (car == null) return;
+            car.CarAnimated = true;
+        }
+    });
 }
 //#endregion
 
@@ -105,8 +137,7 @@ const InitBuffers = () => {
     gl.viewport(0, 0, canvas.width, canvas.height);
     gl.clearColor(1, 1, 1, 1);
 
-    viewerPos = vec3(4.0, 4.0, 4.0);
-    projectionMatrix = ortho(-32, 32, -32, 32, -32, 32);
+    projectionMatrix = ortho(-32, 32, -32, 32, -100, 100);
 
     var nBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, nBuffer);
@@ -171,5 +202,9 @@ const Render = () => {
         drawCount += model.VertexCount;
         modelViewMatrix = modelViewStack.pop();
     });
+
+    requestAnimationFrame(Render);
 }
+
+
 //#endregion

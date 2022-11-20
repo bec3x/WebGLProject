@@ -148,10 +148,10 @@ var MouseManipulation = {
 
     init: function (targetElement) {
         this.targetElement = targetElement;
-        this._RegisterEvents();
+        this.RegisterEvents();
     },
 
-    _RegisterEvents: function () {
+    RegisterEvents: function () {
         document.getElementById(this.targetElement).addEventListener("mousedown", function (e) {
             if (e.which == 1) {
                 MouseManipulation.mouseDownLeft = true;
@@ -164,14 +164,11 @@ var MouseManipulation = {
                 MouseManipulation.mousePosY = e.y;
                 MouseManipulation.mousePosX = e.x;
             }
-
-            Render();
         });
 
         document.getElementById(this.targetElement).addEventListener("mouseup", function (e) {
             MouseManipulation.mouseDownLeft = false;
             MouseManipulation.mouseDownRight = false;
-            Render();
         });
 
         document.getElementById(this.targetElement).addEventListener("mousemove", function (e) {
@@ -188,8 +185,6 @@ var MouseManipulation = {
                 MouseManipulation.theta += (e.y - MouseManipulation.mousePosY) / 100;
                 MouseManipulation.mousePosY = e.y;
             }
-
-            Render();
         });
     }
 };
