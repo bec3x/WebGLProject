@@ -39,7 +39,7 @@ window.onload = function init() {
 
     MouseManipulation.init('gl-canvas');
 
-    var height = -15.5;
+    var height = -15.9;
 
     // Creating list of models
     models = [
@@ -63,12 +63,12 @@ window.onload = function init() {
         new StreetLight(mult(translate(4.5, height, 12),rotate(270,0,1,0))),
         new StreetLight(mult(translate(4.5, height, 24),rotate(270,0,1,0))),
         // Top Road Side for Traffic Cones
-        new TrafficCone(translate(3.5, height, -4.5)),
-        new TrafficCone(translate(1.5, height, -4.5)),
-        new TrafficCone(translate(-1.5, height, -4.5)),
-        new TrafficCone(translate(-3.5, height, -4.5)),
+        new TrafficCone(translate(3.5, height + 0.1, -4.5)),
+        new TrafficCone(translate(1.5, height + 0.1, -4.5)),
+        new TrafficCone(translate(-1.5, height + 0.1, -4.5)),
+        new TrafficCone(translate(-3.5, height + 0.1, -4.5)),
         // Car
-        new Car(translate(-25, height + 0.5, 2)),
+        new Car(translate(-25, height + 1, 2)),
         // Stop Sign
         new StopSign(translate(4.5, height, 7)),
         // Traffic Lights on each corner of the Road
