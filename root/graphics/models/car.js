@@ -56,12 +56,13 @@ class Car {
                 this.#location.x = this.#location.x + deltaX;
                 this.#carStepCount++;
             }
-            else {                
+            else {
                 this.#carAnimated = false;
-                this.#carStepCount = 0;
             }
         }
-        else {
+        else if (!this.#carAnimated && this.#carStepCount >= this.#CAR_SPEED) {
+            this.#carAnimated = false;
+            this.#carStepCount = 0;
             this.#translationMatrix = translate(this.#startLocation.x, this.#startLocation.y, this.#startLocation.z);
             this.#location.x = this.#startLocation.x;
             this.#location.y = this.#startLocation.y;

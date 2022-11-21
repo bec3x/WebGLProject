@@ -112,7 +112,7 @@ const RegisterEvents = () => {
 
         if (event.code === 'KeyA' || (event.shiftKey && event.code === 'KeyA')) {
             if (car == null) return;
-            car.CarAnimated = true;
+            car.CarAnimated = !car.CarAnimated;
         }
     });
 }
