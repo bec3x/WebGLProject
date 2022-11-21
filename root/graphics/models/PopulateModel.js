@@ -75,6 +75,8 @@ window.onload = function init() {
         // Traffic Lights on each corner of the Road
         new TrafficLight(mult(translate(-4.5, height, -4.5), rotate(0, 0, 1, 0))),
         new TrafficLight(mult(translate(4.5, height, 4.5), rotate(180, 0, 1, 0))),
+        // Trash Can
+        //new TrashCan(FeatureApi.scale4(1,1,1)),
     ];
 
     car = GetCarModel();
