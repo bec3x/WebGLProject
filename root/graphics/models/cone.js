@@ -37,7 +37,7 @@ class TrafficCone {
     }
 
     #GenerateConeBase() {
-        var baseColor = FeatureApi.HexToColorVector('#000000');
+        var baseColor = FeatureApi.HexToColorVector('#5A5A5A');
 
         FeatureApi.Quad(this.#baseVertices[0], this.#baseVertices[1], this.#baseVertices[2], this.#baseVertices[3], baseColor);
         this.#vertexCount += 6;

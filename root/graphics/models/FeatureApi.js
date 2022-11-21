@@ -3,7 +3,7 @@ var FeatureApi = {
     // before change a, b, d, d, b, c
     Quad: function (a, b, c, d, color) {
         var t1 = subtract(b, a);
-        var t2 = subtract(c, d);
+        var t2 = subtract(c, b);
         var normal = cross(t1, t2);
         var normal = vec3(normal);
         normal = normalize(normal);

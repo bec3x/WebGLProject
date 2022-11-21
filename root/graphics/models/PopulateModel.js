@@ -19,13 +19,13 @@ var modelViewMatrix = mat4(),
 var modelViewMatrixLoc, projectionMatrixLoc;
 var ambientProduct, diffuseProduct, specularProduct;
 
-var lightPosition = vec4(0, 0, 0, 0.0);
-var lightAmbient = vec4(0.2, 0.2, 0.2, 1.0);
-var lightDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
+var lightPosition = vec4(0, -5, 4, 0.0);
+var lightAmbient = vec4(0.8, 0.8, 0.8, 1.0);
+var lightDiffuse = vec4(0,0,0, 1.0);
 var lightSpecular = vec4(1.0, 1.0, 1.0, 1.0);
 
-var materialAmbient = vec4(1.0, 0.5, 0.5, 1.0);
-var materialDiffuse = vec4(1.0, 0.1, 0.1, 1.0);
+var materialAmbient = vec4(0.1, 0.1, 0.1, 1.0);
+var materialDiffuse = vec4(1, 1, 1, 1.0);
 var materialSpecular = vec4(1.0, 1.0, 1.0, 1.0);
 var materialShininess = 50.0;
 
@@ -47,22 +47,22 @@ window.onload = function init() {
         // Main Road
         new Road(),
         // Bus Stop
-        new BusStop(translate(10,height,-5)),
+        new BusStop(translate(10, height, -5)),
         // Left Road Side for Street Lights
-        new StreetLight(mult(translate(-12, height, -4.5),rotate(0,0,1,0))),
-        new StreetLight(mult(translate(-24, height, -4.5),rotate(0,0,1,0))),
-        new StreetLight(mult(translate(-12, height, 4.5),rotate(180,0,1,0))),
-        new StreetLight(mult(translate(-24, height, 4.5),rotate(180,0,1,0))),
+        new StreetLight(mult(translate(-12, height, -4.5), rotate(0, 0, 1, 0))),
+        new StreetLight(mult(translate(-24, height, -4.5), rotate(0, 0, 1, 0))),
+        new StreetLight(mult(translate(-12, height, 4.5), rotate(180, 0, 1, 0))),
+        new StreetLight(mult(translate(-24, height, 4.5), rotate(180, 0, 1, 0))),
         // Right Road Side for Street Lights
-        new StreetLight(mult(translate(14, height, -4.5),rotate(0,0,1,0))),
-        new StreetLight(mult(translate(26, height, -4.5),rotate(0,0,1,0))),
-        new StreetLight(mult(translate(14, height, 4.5),rotate(180,0,1,0))),
-        new StreetLight(mult(translate(26, height, 4.5),rotate(180,0,1,0))),
+        new StreetLight(mult(translate(14, height, -4.5), rotate(0, 0, 1, 0))),
+        new StreetLight(mult(translate(26, height, -4.5), rotate(0, 0, 1, 0))),
+        new StreetLight(mult(translate(14, height, 4.5), rotate(180, 0, 1, 0))),
+        new StreetLight(mult(translate(26, height, 4.5), rotate(180, 0, 1, 0))),
         // Bottom Road Side for Street Lights
-        new StreetLight(mult(translate(-4.5, height, 12),rotate(90,0,1,0))),
-        new StreetLight(mult(translate(-4.5, height, 24),rotate(90,0,1,0))),
-        new StreetLight(mult(translate(4.5, height, 12),rotate(270,0,1,0))),
-        new StreetLight(mult(translate(4.5, height, 24),rotate(270,0,1,0))),
+        new StreetLight(mult(translate(-4.5, height, 12), rotate(90, 0, 1, 0))),
+        new StreetLight(mult(translate(-4.5, height, 24), rotate(90, 0, 1, 0))),
+        new StreetLight(mult(translate(4.5, height, 12), rotate(270, 0, 1, 0))),
+        new StreetLight(mult(translate(4.5, height, 24), rotate(270, 0, 1, 0))),
         // Top Road Side for Traffic Cones
         new TrafficCone(translate(3.5, height + 0.1, -4.5)),
         new TrafficCone(translate(1.5, height + 0.1, -4.5)),
@@ -73,8 +73,8 @@ window.onload = function init() {
         // Stop Sign
         new StopSign(translate(4.5, height, 7)),
         // Traffic Lights on each corner of the Road
-        new TrafficLight(mult(translate(-4.5, height, -4.5),rotate(0,0,1,0))),
-        new TrafficLight(mult(translate(4.5, height, 4.5),rotate(180,0,1,0))),
+        new TrafficLight(mult(translate(-4.5, height, -4.5), rotate(0, 0, 1, 0))),
+        new TrafficLight(mult(translate(4.5, height, 4.5), rotate(180, 0, 1, 0))),
     ];
 
     car = GetCarModel();
@@ -92,7 +92,7 @@ window.onload = function init() {
 //#endregion
 
 //#region General Functions
-const GetCarModel = () =>  {
+const GetCarModel = () => {
     var carModels = models.filter((model) => {
         return model instanceof Car;
     });
@@ -105,7 +105,7 @@ const GetCarModel = () =>  {
 }
 
 const RegisterEvents = () => {
-    document.addEventListener('keydown', function(event) {
+    document.addEventListener('keydown', function (event) {
         if (event.name === 'Shift') {
             return;
         }
@@ -138,6 +138,7 @@ const InitBuffers = () => {
     gl.clearColor(1, 1, 1, 1);
 
     projectionMatrix = ortho(-32, 32, -32, 32, -100, 100);
+    // projectionMatrix = ortho(-8, 8, -8, 8, -8, 8);
 
     var nBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, nBuffer);
