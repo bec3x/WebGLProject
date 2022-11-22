@@ -137,6 +137,8 @@ var MouseManipulation = {
     radius: 1,
     dr: 2.0 * Math.PI / 180,
 
+    zoomFactor: 4.0,
+
     mouseDownRight: false,
     mouseDownLeft: false,
 
@@ -184,6 +186,15 @@ var MouseManipulation = {
 
                 MouseManipulation.theta += (e.y - MouseManipulation.mousePosY) / 100;
                 MouseManipulation.mousePosY = e.y;
+            }
+        });
+
+        document.getElementById(this.targetElement).addEventListener("wheel", function (e) {
+            if (e.wheelDelta > 0) {
+                MouseManipulation.zoomFactor = Math.max(0.1, MouseManipulation.zoomFactor - 0.1);
+            }
+            else {
+                MouseManipulation.zoomFactor += 0.1;
             }
         });
     }

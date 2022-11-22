@@ -28,7 +28,7 @@ var ambientProduct, diffuseProduct, specularProduct;
 
 var lightPosition = vec4(0, -5, 4, 0.0);
 var lightAmbient = vec4(0.8, 0.8, 0.8, 1.0);
-var lightDiffuse = vec4(0,0,0, 1.0);
+var lightDiffuse = vec4(0, 0, 0, 1.0);
 var lightSpecular = vec4(1.0, 1.0, 1.0, 1.0);
 
 var materialAmbient = vec4(0.1, 0.1, 0.1, 1.0);
@@ -36,6 +36,12 @@ var materialDiffuse = vec4(1, 1, 1, 1.0);
 var materialSpecular = vec4(1.0, 1.0, 1.0, 1.0);
 var materialShininess = 50.0;
 
+var xMin = -8;
+var xMax =  8;
+var yMin = -8;
+var yMax =  8;
+var near = -100;
+var far = 100;
 // #endregion
 
 var models = [];
@@ -78,12 +84,12 @@ window.onload = function init() {
         // Car
         new Car(translate(-25, height + 1, 2)),
         // Stop Sign
-        new StopSign(mult(translate(4.5, height, 7),FeatureApi.scale4(1.5,1.5,1.5))),
+        new StopSign(mult(translate(4.5, height, 7), FeatureApi.scale4(1.5, 1.5, 1.5))),
         // Traffic Lights on each corner of the Road
         new TrafficLight(mult(translate(-4.5, height, -4.5), rotate(0, 0, 1, 0))),
         new TrafficLight(mult(translate(4.5, height, 4.5), rotate(180, 0, 1, 0))),
         // Trash Can
-        new TrashCan(mult(translate(6.5,height,-5),FeatureApi.scale4(.3,.3,.3))),
+        new TrashCan(mult(translate(6.5, height, -5), FeatureApi.scale4(.3, .3, .3))),
     ];
 
     car = GetCarModel();
@@ -142,7 +148,7 @@ const RegisterEvents = () => {
                 }
             }
         */
-       
+
         if (event.code === 'KeyA' || (event.shiftKey && event.code === 'KeyA')) {
             if (car == null) return;
             car.CarAnimated = !car.CarAnimated;
@@ -170,7 +176,7 @@ const InitBuffers = () => {
     gl.viewport(0, 0, canvas.width, canvas.height);
     gl.clearColor(1, 1, 1, 1);
 
-    projectionMatrix = ortho(-32, 32, -32, 32, -100, 100);
+
     // projectionMatrix = ortho(-8, 8, -8, 8, -8, 8);
 
     var nBuffer = gl.createBuffer();
@@ -220,6 +226,13 @@ const InitBuffers = () => {
 const Render = () => {
     var drawCount = 0;
     gl.clear(gl.COLOR_BUFFER_BIT);
+
+    // projectionMatrix = ortho(-32, 32, -32, 32, -100, 100);
+    projectionMatrix = ortho(xMin * MouseManipulation.zoomFactor - MouseManipulation.translateX,
+                             xMax * MouseManipulation.zoomFactor - MouseManipulation.translateX,
+                             yMin * MouseManipulation.zoomFactor - MouseManipulation.translateY,
+                             yMax * MouseManipulation.zoomFactor - MouseManipulation.translateY,
+                             near, far);
     gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(projectionMatrix));
 
     eye = vec3(MouseManipulation.radius * Math.cos(MouseManipulation.phi),
