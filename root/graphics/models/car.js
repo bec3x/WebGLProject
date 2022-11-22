@@ -37,8 +37,21 @@ class Car {
         return this.#carAnimated;
     }
 
+    get TranslationMatrix() {
+        return this.#translationMatrix;
+    }
+
+    set TranslationMatrix(value) {
+        if (value == this.#translationMatrix || value == null) return;
+        this.#translationMatrix = value;
+    }
+
     set CarAnimated(value) {
         this.#carAnimated = value;
+    }
+    
+    DriveCar(matrix) {
+        this.#translationMatrix = add(this.#translationMatrix, matrix);
     }
 
     Render(drawCount) {

@@ -2,6 +2,13 @@
     Intention of this program is to be used as a general program to populate models
     that we draw so that we do not have to recreate the same thing over and over
 */
+/*
+// Project 4.2
+// Authors: Brad Carter, Ronnie Jackson
+// Instructor: Cen Li
+// CSCI 4160-001
+// Due: 11/22/2022
+*/
 var canvas, program, gl;
 
 var eye = [1, .5, 1];
@@ -42,7 +49,7 @@ window.onload = function init() {
 
     var height = 0;
 
-    // Creating list of models
+    //Creating list of models
     models = [
         // Main Road
         new Road(),
@@ -71,12 +78,12 @@ window.onload = function init() {
         // Car
         new Car(translate(-25, height + 1, 2)),
         // Stop Sign
-        new StopSign(translate(4.5, height, 7)),
+        new StopSign(mult(translate(4.5, height, 7),FeatureApi.scale4(1.5,1.5,1.5))),
         // Traffic Lights on each corner of the Road
         new TrafficLight(mult(translate(-4.5, height, -4.5), rotate(0, 0, 1, 0))),
         new TrafficLight(mult(translate(4.5, height, 4.5), rotate(180, 0, 1, 0))),
         // Trash Can
-        //new TrashCan(FeatureApi.scale4(1,1,1)),
+        new TrashCan(mult(translate(6.5,height,-5),FeatureApi.scale4(.3,.3,.3))),
     ];
 
     car = GetCarModel();
@@ -112,6 +119,30 @@ const RegisterEvents = () => {
             return;
         }
 
+        /*
+            get cars translation matrix
+            if (w) {
+                translate in some direction
+
+                if (a) {
+                    rotate in some direction
+                }
+                else if (d) {
+                    roate in some other direction
+                }
+            }
+            else if (s) {
+                translate backwards
+
+                if (a) {
+                    rotate in some direction
+                }
+                else if (d) {
+                    roate in some other direction
+                }
+            }
+        */
+       
         if (event.code === 'KeyA' || (event.shiftKey && event.code === 'KeyA')) {
             if (car == null) return;
             car.CarAnimated = !car.CarAnimated;
