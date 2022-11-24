@@ -90,6 +90,11 @@ window.onload = function init() {
         new TrafficLight(mult(translate(4.5, height, 4.5), rotate(180, 0, 1, 0))),
         // Trash Can
         new TrashCan(mult(translate(6.5, height, -5), FeatureApi.scale4(.3, .3, .3))),
+        // Buildings
+        new Building(translate(-20,0,-20)),
+        new Building(translate(20,0,-20)),
+        // Speed Limit
+        new SpeedLimit(mult(mult(translate(-17, height, 4.5), rotate(-90,0,1,0)), FeatureApi.scale4(1.5, 1.5, 1.5))),
     ];
 
     car = GetCarModel();
