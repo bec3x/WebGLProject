@@ -71,10 +71,10 @@ class Road {
         FeatureApi.Quad(d,a,b,c,roadColor);
         this.#vertexCount += 6;
 
-        a = vec4(-4,this.#height + 0.015,32);
-        b = vec4(-4,this.#height + 0.015,-32);
-        c = vec4(4,this.#height + 0.015,-32);
-        d = vec4(4,this.#height + 0.015,32);
+        a = vec4(-4,this.#height + 0.016,32);
+        b = vec4(-4,this.#height + 0.016,-32);
+        c = vec4(4,this.#height + 0.016,-32);
+        d = vec4(4,this.#height + 0.016,32);
 
         FeatureApi.Quad(a,b,c,d,roadColor);
         this.#vertexCount += 6;
@@ -91,11 +91,7 @@ class Road {
         // Draw textured roads
         gl.uniform1i(gl.getUniformLocation(program, "texture"), 1);
         gl.uniform1i(gl.getUniformLocation(program, "textureFlag"), 1);
-        gl.drawArrays(gl.TRIANGLES, drawCount + 24, 6);
-
-        gl.uniform1i(gl.getUniformLocation(program, "texture"), 1);
-        gl.uniform1i(gl.getUniformLocation(program, "textureFlag"), 1);
-        gl.drawArrays(gl.TRIANGLES, drawCount + 30, 6);
+        gl.drawArrays(gl.TRIANGLES, drawCount + 24, this.#vertexCount - 24);
 
         gl.uniform1i(gl.getUniformLocation(program, "textureFlag"), 0);
     }
