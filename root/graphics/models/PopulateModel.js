@@ -19,6 +19,7 @@ var up = [0, 1, 0];
 var points = [];
 var colors = [];
 var normals = [];
+var textCoords = [];
 
 var modelViewStack = [];
 var modelViewMatrix = mat4(),
@@ -44,6 +45,14 @@ var near = -100;
 var far = 100;
 // #endregion
 
+// for texture coordinates of a square
+var textCoord = [
+    vec2(0,1),
+    vec2(0,0),
+    vec2(1,0),
+    vec2(1,1)
+];
+
 var models = [];
 var car;
 
@@ -54,7 +63,7 @@ window.onload = function init() {
     MouseManipulation.init('gl-canvas');
 
     var height = 0;
-
+    
     //Creating list of models
     models = [
         // Main Road
@@ -105,8 +114,8 @@ window.onload = function init() {
     });
 
     RegisterEvents();
-
     InitBuffers();
+
     Render();
 }
 //#endregion
@@ -208,6 +217,14 @@ const InitBuffers = () => {
     gl.vertexAttribPointer(vColor, 4, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(vColor);
 
+    var tBuffer = gl.createBuffer();
+    gl.bindBuffer( gl.ARRAY_BUFFER, tBuffer );
+    gl.bufferData( gl.ARRAY_BUFFER, flatten(textCoords), gl.STATIC_DRAW );
+    
+    var vTexCoord = gl.getAttribLocation( program, "vTexCoord" );
+    gl.vertexAttribPointer( vTexCoord, 2, gl.FLOAT, false, 0, 0 );
+    gl.enableVertexAttribArray( vTexCoord );
+
     ambientProduct = mult(lightAmbient, materialAmbient);
     diffuseProduct = mult(lightDiffuse, materialDiffuse);
     specularProduct = mult(lightSpecular, materialSpecular);
@@ -226,11 +243,83 @@ const InitBuffers = () => {
 
     modelViewMatrixLoc = gl.getUniformLocation(program, "modelViewMatrix");
     projectionMatrixLoc = gl.getUniformLocation(program, "projectionMatrix");
+
+    // ==============  Establish Textures =================
+    // Texture 1
+    // --------create texture object 1----------
+    texture1 = gl.createTexture();
+
+    // create the image object
+    texture1.image = new Image();
+
+    // Tell the broswer to load an image
+    texture1.image.src='../../images/grass.jpg';
+
+    // register the event handler to be called on loading an image
+    texture1.image.onload = function() {  loadTexture(texture1, gl.TEXTURE0); }
+
+    // Texture 2
+    // --------create texture object 2----------
+    texture2 = gl.createTexture();
+
+    // create the image object
+    texture2.image = new Image();
+
+    // Tell the broswer to load an image
+    texture2.image.src='../../images/road.jpg';
+
+    // register the event handler to be called on loading an image
+    texture2.image.onload = function() {  loadTexture(texture2, gl.TEXTURE1); }
+
+    // Texture 3
+    // --------create texture object 3----------
+    texture3 = gl.createTexture();
+
+    // create the image object
+    texture3.image = new Image();
+
+    // Tell the broswer to load an image
+    texture3.image.src='../../images/speedLimit.jpg';
+
+    // register the event handler to be called on loading an image
+    texture3.image.onload = function() {  loadTexture(texture3, gl.TEXTURE2); }
 }
+
+function loadTexture(texture, whichTexture) 
+{
+    // Flip the image's y axis
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+
+    // Enable texture unit 1
+    gl.activeTexture(whichTexture);
+
+    // bind the texture object to the target
+    gl.bindTexture( gl.TEXTURE_2D, texture);
+
+    // set the texture image
+    gl.texImage2D( gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, texture.image );
+
+    // version 1 (combination needed for images that are not powers of 2
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    // version 2
+    //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.MIRRORED_REPEAT);
+    //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.MIRRORED_REPEAT);
+
+    // set the texture parameters
+    gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+
+    // mipmap option (only if the image is of power of 2 dimension)
+    //gl.generateMipmap( gl.TEXTURE_2D );
+    //gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+    //gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR_MIPMAP_NEAREST);
+};
+
 
 const Render = () => {
     var drawCount = 0;
-    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     // projectionMatrix = ortho(-32, 32, -32, 32, -100, 100);
     projectionMatrix = ortho(xMin * MouseManipulation.zoomFactor - MouseManipulation.translateX,
@@ -246,6 +335,7 @@ const Render = () => {
 
     modelViewMatrix = lookAt(eye, at, up);
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
+    gl.uniform1i(gl.getUniformLocation(program, "textureFlag"), 0);
 
     // Render each model
     models.forEach((model) => {

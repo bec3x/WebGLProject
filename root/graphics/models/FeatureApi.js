@@ -11,26 +11,32 @@ var FeatureApi = {
         points.push(a);
         colors.push(color);
         normals.push(normal);
+        textCoords.push(textCoord[0]);
 
         points.push(b);
         colors.push(color);
         normals.push(normal);
+        textCoords.push(textCoord[1]);
 
         points.push(c);
         colors.push(color);
         normals.push(normal);
+        textCoords.push(textCoord[2]);
 
         points.push(a);
         colors.push(color);
         normals.push(normal);
+        textCoords.push(textCoord[0]);
 
         points.push(c);
         colors.push(color);
         normals.push(normal);
+        textCoords.push(textCoord[2]);
 
         points.push(d);
         colors.push(color);
         normals.push(normal);
+        textCoords.push(textCoord[3]);
     },
 
     Triangle: function (a, b, c, color) {
@@ -42,14 +48,17 @@ var FeatureApi = {
 
         points.push(a);
         colors.push(color);
+        textCoords.push(textCoord[3]);
         normals.push(normal);
 
         points.push(b);
         colors.push(color);
+        textCoords.push(textCoord[3]);
         normals.push(normal);
 
         points.push(c);
         colors.push(color);
+        textCoords.push(textCoord[3]);
         normals.push(normal);
     },
 
@@ -63,15 +72,18 @@ var FeatureApi = {
         for (var i = 0; i < M - 2; i++) {
             points.push(vertices[indices[0]]);
             normals.push(normal);
-            colors.push(color);
+        textCoords.push(textCoord[3]);
+        colors.push(color);
 
             points.push(vertices[indices[prev]]);
             normals.push(normal);
-            colors.push(color);
+        textCoords.push(textCoord[3]);
+        colors.push(color);
 
             points.push(vertices[indices[next]]);
             normals.push(normal);
             colors.push(color);
+            textCoords.push(textCoord[3]);
 
             prev = next;
             next = next + 1;

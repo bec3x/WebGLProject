@@ -12,22 +12,48 @@ class Road {
     }
 
     Generate() {
+        this.#DrawGrass(); 
+
         this.#DrawRoad();
-        
-        // Sidewalk currently being used for world plane
-        // changed to green to look like grass
-        this.#DrawSidewalk(); 
     }
 
-    #DrawSidewalk() {
+    #DrawGrass() {
         var baseColor = FeatureApi.HexToColorVector("#265D07");
         var a,b,c,d;
         var width = 32;
 
+        //Bottom left patch
         a = vec4(-1 * width,this.#height,width);
-        b = vec4(-1 * width,this.#height,-1 * width);
-        c = vec4(width,this.#height,-1 * width);
-        d = vec4(width,this.#height,width);
+        b = vec4(-1 * width,this.#height,4);
+        c = vec4(-4,this.#height,4);
+        d = vec4(-4,this.#height,width);
+
+        FeatureApi.Quad(a,b,c,d,baseColor);
+        this.#vertexCount += 6;
+
+        //Top left patch
+        a = vec4(-1 * width,this.#height,-1 *width);
+        b = vec4(-1 * width,this.#height,-4);
+        c = vec4(-4,this.#height,-4);
+        d = vec4(-4,this.#height,-1 * width);
+
+        FeatureApi.Quad(a,b,c,d,baseColor);
+        this.#vertexCount += 6;
+
+        //Top right patch
+        a = vec4(width,this.#height,-1 *width);
+        b = vec4(width,this.#height,-4);
+        c = vec4(4,this.#height,-4);
+        d = vec4(4,this.#height,-1 * width);
+
+        FeatureApi.Quad(a,b,c,d,baseColor);
+        this.#vertexCount += 6;
+
+        //Bottom right patch
+        a = vec4(width,this.#height,width);
+        b = vec4(width,this.#height,4);
+        c = vec4(4,this.#height,4);
+        d = vec4(4,this.#height,width);
 
         FeatureApi.Quad(a,b,c,d,baseColor);
         this.#vertexCount += 6;
@@ -35,7 +61,6 @@ class Road {
 
     #DrawRoad() {
         var roadColor = FeatureApi.HexToColorVector("#000000");
-        var yellowColor = FeatureApi.HexToColorVector("#f7b500");
         var a,b,c,d;
 
         a = vec4(-32,this.#height + 0.01,4);
@@ -43,13 +68,13 @@ class Road {
         c = vec4(32,this.#height + 0.01,-4);
         d = vec4(32,this.#height + 0.01,4);
 
-        FeatureApi.Quad(a,b,c,d,roadColor);
+        FeatureApi.Quad(d,a,b,c,roadColor);
         this.#vertexCount += 6;
 
-        a = vec4(-4,this.#height + 0.01,32);
-        b = vec4(-4,this.#height + 0.01,-32);
-        c = vec4(4,this.#height + 0.01,-32);
-        d = vec4(4,this.#height + 0.01,32);
+        a = vec4(-4,this.#height + 0.015,32);
+        b = vec4(-4,this.#height + 0.015,-32);
+        c = vec4(4,this.#height + 0.015,-32);
+        d = vec4(4,this.#height + 0.015,32);
 
         FeatureApi.Quad(a,b,c,d,roadColor);
         this.#vertexCount += 6;
@@ -57,6 +82,21 @@ class Road {
 
     Render(drawCount) {
         gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
-        gl.drawArrays(gl.TRIANGLES, drawCount, this.#vertexCount);
+
+        // Draw textured grass
+        gl.uniform1i(gl.getUniformLocation(program, "texture"), 0);
+        gl.uniform1i(gl.getUniformLocation(program, "textureFlag"), 1);
+        gl.drawArrays(gl.TRIANGLES, drawCount, 24);
+
+        // Draw textured roads
+        gl.uniform1i(gl.getUniformLocation(program, "texture"), 1);
+        gl.uniform1i(gl.getUniformLocation(program, "textureFlag"), 1);
+        gl.drawArrays(gl.TRIANGLES, drawCount + 24, 6);
+
+        gl.uniform1i(gl.getUniformLocation(program, "texture"), 1);
+        gl.uniform1i(gl.getUniformLocation(program, "textureFlag"), 1);
+        gl.drawArrays(gl.TRIANGLES, drawCount + 30, 6);
+
+        gl.uniform1i(gl.getUniformLocation(program, "textureFlag"), 0);
     }
 }

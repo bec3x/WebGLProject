@@ -9,8 +9,10 @@
         attribute vec4 vPosition;
         attribute vec3 vNormal;
         attribute vec4 vColor;
+        attribute  vec2 vTexCoord;
 
         varying vec4 fColor;
+        varying vec2 fTexCoord;
 
         uniform vec4 ambientProduct, diffuseProduct, specularProduct;
         uniform mat4 modelViewMatrix;
@@ -47,6 +49,7 @@
             gl_Position = projectionMatrix * modelViewMatrix * vPosition;
             fColor = vColor + ambient + diffuse + specular;
             fColor.a = 1.0;
+            fTexCoord = vTexCoord;
         }
     </script>
 
@@ -55,10 +58,19 @@
         precision highp float;
         #endif
 
+        uniform int textureFlag;
+
+        varying vec2 fTexCoord;
+        uniform sampler2D texture;
         varying vec4 fColor;
 
         void main() {
-            gl_FragColor = fColor;
+            if (textureFlag == 1){
+                gl_FragColor = texture2D( texture, fTexCoord );
+            }
+            else {
+                gl_FragColor = fColor;
+            }
         }
     </script>
 

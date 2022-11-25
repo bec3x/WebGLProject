@@ -57,14 +57,6 @@ class SpeedLimit {
         var center = [0,2,0.07];
         var fa,fb,fc,fd, ba,bb,bc,bd;
         var sideLenghth = 0.02;
-    
-        //Front Face
-        fa = vec4(center[0] + radius, center[1] + height, center[2]);
-        fb = vec4(center[0] - radius, center[1] + height, center[2]);
-        fc = vec4(center[0] - radius, center[1] - height, center[2]);
-        fd = vec4(center[0] + radius, center[1] - height, center[2]);
-        FeatureApi.Quad(fa,fb,fc,fd, signFrontFaceColor);
-        this.#vertexCount += 6;
 
         //Back Face
         ba = vec4(center[0] + radius, center[1] + height, center[2] - sideLenghth);
@@ -74,17 +66,40 @@ class SpeedLimit {
         FeatureApi.Quad(ba,bd,bc,bb, signBackFaceColor);
         this.#vertexCount += 6;
 
+        //Front Face
+        fa = vec4(center[0] + radius, center[1] + height, center[2]);
+        fb = vec4(center[0] - radius, center[1] + height, center[2]);
+        fc = vec4(center[0] - radius, center[1] - height, center[2]);
+        fd = vec4(center[0] + radius, center[1] - height, center[2]);
+        FeatureApi.Quad(fb,fc,fd,fa, signFrontFaceColor);
+        this.#vertexCount += 6;   
+
         //Around the sign
         FeatureApi.Quad(fa,fb,bb,ba, blackColor);
         FeatureApi.Quad(fb,fc,bc,bb, blackColor);
         FeatureApi.Quad(fc,fd,bd,bc, blackColor);
         FeatureApi.Quad(fd,fa,ba,bd, blackColor);
         this.#vertexCount += 6 * 4;
+
+       
     }
 
     Render(drawCount) {
+        modelViewStack.push(modelViewMatrix);
         modelViewMatrix = mult(modelViewMatrix, this.#translationMatrix);
         gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
-        gl.drawArrays(gl.TRIANGLES, drawCount, this.#vertexCount);
+
+        // Draw Pole and back face of the sign
+        gl.drawArrays(gl.TRIANGLES, drawCount, this.#vertexCount - 30);
+
+        // Draw Textured front face of the Sign
+        gl.uniform1i(gl.getUniformLocation(program, "texture"), 2);
+        gl.uniform1i(gl.getUniformLocation(program, "textureFlag"), 1);
+        gl.drawArrays(gl.TRIANGLES, drawCount + this.#vertexCount - 30, 6);
+        gl.uniform1i(gl.getUniformLocation(program, "textureFlag"), 0);
+
+        gl.drawArrays(gl.TRIANGLES, drawCount + this.#vertexCount - 24, 24);
+
+        modelViewMatrix = modelViewStack.pop();
     }
 }
