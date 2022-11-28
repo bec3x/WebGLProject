@@ -38,11 +38,18 @@ var materialSpecular = vec4(1.0, 1.0, 1.0, 1.0);
 var materialShininess = 50.0;
 
 var xMin = -8;
-var xMax =  8;
+var xMax = 8;
 var yMin = -8;
-var yMax =  8;
+var yMax = 8;
 var near = -100;
 var far = 100;
+
+var movements = {
+    'KeyW': false,
+    'KeyA': false,
+    'KeyD': false,
+    'KeyS': false,
+};
 // #endregion
 
 // for texture coordinates of a square
@@ -55,14 +62,14 @@ var textCoord = [
 
 var models = [];
 var car;
+var driveInterval;
+var height = 0;
 
 //#region Main
 window.onload = function init() {
     ConfigureWebGL();
 
-    MouseManipulation.init('gl-canvas');
-
-    var height = 0;
+    MouseManipulation.init('gl-canvas');    
     
     //Creating list of models
     models = [
@@ -135,39 +142,51 @@ const GetCarModel = () => {
 
 const RegisterEvents = () => {
     document.addEventListener('keydown', function (event) {
-        if (event.name === 'Shift') {
+        if (movements[event.code] == undefined) {
+            if (event.code == 'KeyB') {
+                ResetScene();
+                return;
+            }
+        }
+        movements[event.code] = true;
+
+        if (Object.values(movements).some((e) => e)) {
+            if (!driveInterval) {
+                driveInterval = setInterval(() => {
+                    Drive();
+                }, 15);
+            }
+        }
+    }, false);
+
+    document.addEventListener('keyup', function (event) {
+        if (movements[event.code] == undefined) {
             return;
         }
+        movements[event.code] = false;
 
-        /*
-            get cars translation matrix
-            if (w) {
-                translate in some direction
-
-                if (a) {
-                    rotate in some direction
-                }
-                else if (d) {
-                    roate in some other direction
-                }
-            }
-            else if (s) {
-                translate backwards
-
-                if (a) {
-                    rotate in some direction
-                }
-                else if (d) {
-                    roate in some other direction
-                }
-            }
-        */
-
-        if (event.code === 'KeyA' || (event.shiftKey && event.code === 'KeyA')) {
-            if (car == null) return;
-            car.CarAnimated = !car.CarAnimated;
+        if (!Object.values(movements).some((e) => e)) {
+            clearInterval(driveInterval);
+            driveInterval = null;
         }
+
+    }, false);
+}
+
+const ResetScene = () => {
+    Object.keys(movements).forEach((key) => {
+        movements[key] = false;
     });
+
+    clearInterval(driveInterval);
+    driveInterval = null;
+
+    car.TranslationMatrix = translate(-25, height + 1, 2);
+}
+
+const Drive = () => {
+    car.DriveCar(movements);
+    console.log("running interval");
 }
 //#endregion
 
@@ -323,10 +342,10 @@ const Render = () => {
 
     // projectionMatrix = ortho(-32, 32, -32, 32, -100, 100);
     projectionMatrix = ortho(xMin * MouseManipulation.zoomFactor - MouseManipulation.translateX,
-                             xMax * MouseManipulation.zoomFactor - MouseManipulation.translateX,
-                             yMin * MouseManipulation.zoomFactor - MouseManipulation.translateY,
-                             yMax * MouseManipulation.zoomFactor - MouseManipulation.translateY,
-                             near, far);
+        xMax * MouseManipulation.zoomFactor - MouseManipulation.translateX,
+        yMin * MouseManipulation.zoomFactor - MouseManipulation.translateY,
+        yMax * MouseManipulation.zoomFactor - MouseManipulation.translateY,
+        near, far);
     gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(projectionMatrix));
 
     eye = vec3(MouseManipulation.radius * Math.cos(MouseManipulation.phi),

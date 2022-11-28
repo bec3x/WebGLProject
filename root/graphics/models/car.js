@@ -8,6 +8,7 @@ class Car {
     #CAR_SPEED = 200;
     #location;
     #startLocation;
+    #currentRotation = 0;
 
     constructor(translationMatrix = mat4()) {
         this.#bodyVertCount = 0;
@@ -33,10 +34,6 @@ class Car {
         return this.#bodyVertCount + (this.#wheelVertCount * 4) + ((this.#hubcapVertCount * 2) * 4);
     }
 
-    get CarAnimated() {
-        return this.#carAnimated;
-    }
-
     get TranslationMatrix() {
         return this.#translationMatrix;
     }
@@ -50,36 +47,33 @@ class Car {
         this.#carAnimated = value;
     }
     
-    DriveCar(matrix) {
-        this.#translationMatrix = add(this.#translationMatrix, matrix);
+    DriveCar(movements) {
+        this.#CreateDriveMatrix(movements);
+    }
+
+    #CreateDriveMatrix(movements) {
+        var rotationAngle = 5;
+        if (movements.KeyD && (movements.KeyW || movements.KeyS)) {
+            this.#translationMatrix = mult(this.#translationMatrix, rotate(rotationAngle * -1, 0, 1, 0));
+        }
+        
+        if (movements.KeyA && (movements.KeyW || movements.KeyS)) {
+            this.#translationMatrix = mult(this.#translationMatrix, rotate(rotationAngle, 0, 1, 0));
+        }
+        
+        if (movements.KeyW) {
+            this.#translationMatrix = mult(this.#translationMatrix, translate(.5, 0, 0));
+        }
+
+        if (movements.KeyS) {
+            this.#translationMatrix = mult(this.#translationMatrix, translate(-.5, 0, 0));
+        }
     }
 
     Render(drawCount) {
         if (drawCount == null) {
             console.log("CAR: drawCount value was null");
             return;
-        }
-
-        if (this.#carAnimated) {
-            if (this.#carStepCount < this.#CAR_SPEED) {
-                var deltaX = (62 - this.#location.x) / this.#CAR_SPEED;
-
-                this.#translationMatrix = translate(this.#location.x, this.#location.y, this.#location.z);
-                
-                this.#location.x = this.#location.x + deltaX;
-                this.#carStepCount++;
-            }
-            else {
-                this.#carAnimated = false;
-            }
-        }
-        else if (!this.#carAnimated && this.#carStepCount >= this.#CAR_SPEED) {
-            this.#carAnimated = false;
-            this.#carStepCount = 0;
-            this.#translationMatrix = translate(this.#startLocation.x, this.#startLocation.y, this.#startLocation.z);
-            this.#location.x = this.#startLocation.x;
-            this.#location.y = this.#startLocation.y;
-            this.#location.z = this.#startLocation.z;
         }
 
         // Render Body
