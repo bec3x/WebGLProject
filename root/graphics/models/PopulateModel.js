@@ -108,7 +108,7 @@ window.onload = function init() {
         new TrashCan(mult(translate(6.5, height, -5), FeatureApi.scale4(.3, .3, .3))),
         // Buildings
         new Building(translate(-20,0,-20)),
-        new Building(translate(20,0,-20)),
+        new Building(mult(translate(20,0,-20),rotate(-90,0,1,0))),
         // Speed Limit
         new SpeedLimit(mult(mult(translate(-17, height, 4.5), rotate(-90,0,1,0)), FeatureApi.scale4(1.5, 1.5, 1.5))),
     ];
@@ -302,6 +302,32 @@ const InitBuffers = () => {
 
     // register the event handler to be called on loading an image
     texture3.image.onload = function() {  loadTexture(texture3, gl.TEXTURE2); }
+
+    // Texture 4
+    // --------create texture object 4----------
+    texture4 = gl.createTexture();
+
+    // create the image object
+    texture4.image = new Image();
+
+    // Tell the broswer to load an image
+    texture4.image.src='../../images/side-wall.jpg';
+
+    // register the event handler to be called on loading an image
+    texture4.image.onload = function() {  loadTexture(texture4, gl.TEXTURE3); }
+
+    // Texture 5
+    // --------create texture object 5----------
+    texture5 = gl.createTexture();
+
+    // create the image object
+    texture5.image = new Image();
+
+    // Tell the broswer to load an image
+    texture5.image.src='../../images/roof-top.jpg';
+
+    // register the event handler to be called on loading an image
+    texture5.image.onload = function() {  loadTexture(texture5, gl.TEXTURE4); }
 }
 
 function loadTexture(texture, whichTexture) 
