@@ -69,7 +69,7 @@ var height = 0;
 window.onload = function init() {
     ConfigureWebGL();
 
-    MouseManipulation.init('gl-canvas');    
+    MouseManipulation.init('gl-canvas');
     
     //Creating list of models
     models = [
@@ -98,7 +98,7 @@ window.onload = function init() {
         new TrafficCone(translate(-1.5, height + 0.1, -4.5)),
         new TrafficCone(translate(-3.5, height + 0.1, -4.5)),
         // Car
-        new Car(translate(-25, height + 1, 2)),
+        new Car(translate(-25, height + 1, 2), new Audio("../../sounds/carSound.mp3")),
         // Stop Sign
         new StopSign(mult(translate(4.5, height, 7), FeatureApi.scale4(1.5, 1.5, 1.5))),
         // Traffic Lights on each corner of the Road
@@ -114,8 +114,7 @@ window.onload = function init() {
     ];
 
     car = GetCarModel();
-    // Idea: After all points have been generated.. pass the models to the car, so that collision can be detected?
-    // Generate the points for each model
+    
     models.forEach((model) => {
         model.Generate();
     });
@@ -143,15 +142,17 @@ const GetCarModel = () => {
 const RegisterEvents = () => {
     document.addEventListener('keydown', function (event) {
         if (movements[event.code] == undefined) {
-            if (event.code == 'KeyB') {
+            if (event.code == 'KeyB') {                
                 ResetScene();
-                return;
             }
+
+            return;
         }
+
         movements[event.code] = true;
 
         if (Object.values(movements).some((e) => e)) {
-            if (!driveInterval) {
+            if (!driveInterval) {         
                 driveInterval = setInterval(() => {
                     Drive();
                 }, 15);
@@ -166,6 +167,8 @@ const RegisterEvents = () => {
         movements[event.code] = false;
 
         if (!Object.values(movements).some((e) => e)) {
+
+            car.CancelSound();
             clearInterval(driveInterval);
             driveInterval = null;
         }
@@ -178,6 +181,8 @@ const ResetScene = () => {
         movements[key] = false;
     });
 
+    car.CancelSound();
+
     clearInterval(driveInterval);
     driveInterval = null;
 
@@ -185,8 +190,17 @@ const ResetScene = () => {
 }
 
 const Drive = () => {
+    if (CarOffScene())
+        ResetScene();
+    
     car.DriveCar(movements);
-    console.log("running interval");
+}
+
+const CarOffScene = () => {
+    return car.Location[0] > 30 ||
+           car.Location[0] < -30 ||
+           car.Location[2] > 30 ||
+           car.Location[2] < -30;
 }
 //#endregion
 
@@ -208,9 +222,6 @@ const ConfigureWebGL = () => {
 const InitBuffers = () => {
     gl.viewport(0, 0, canvas.width, canvas.height);
     gl.clearColor(1, 1, 1, 1);
-
-
-    // projectionMatrix = ortho(-8, 8, -8, 8, -8, 8);
 
     var nBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, nBuffer);
