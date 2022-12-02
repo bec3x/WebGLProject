@@ -3,48 +3,33 @@ class Car {
     #wheelVertCount;
     #hubcapVertCount;
     #translationMatrix;
-    #carAnimated = false;
-    #carStepCount = 0;
-    #CAR_SPEED = 200;
-    #location;
-    #startLocation;
-    #currentRotation = 0;
+    #headLightVertexCount;
+    #carSound;
+    #soundStartTime = 2;
 
-    constructor(translationMatrix = mat4()) {
+    constructor(translationMatrix = mat4(), carSound) {
         this.#bodyVertCount = 0;
         this.#wheelVertCount = 0;
         this.#hubcapVertCount = 0;
+        this.#headLightVertexCount = 0;
+
         this.#translationMatrix = translationMatrix;
-
-        this.#startLocation = {
-            x: this.#translationMatrix[0][3],
-            y: this.#translationMatrix[1][3],
-            z: this.#translationMatrix[2][3],
-
-        };
-
-        this.#location = {
-            x: this.#translationMatrix[0][3],
-            y: this.#translationMatrix[1][3],
-            z: this.#translationMatrix[2][3],
-        };
+        this.#carSound = carSound;
+        this.#carSound.currentTime = this.#soundStartTime;
     }
 
     get VertexCount() {
-        return this.#bodyVertCount + (this.#wheelVertCount * 4) + ((this.#hubcapVertCount * 2) * 4);
+        return this.#bodyVertCount + (this.#wheelVertCount * 4) + ((this.#hubcapVertCount * 2) * 4) + this.#headLightVertexCount * 2;
     }
 
-    get TranslationMatrix() {
-        return this.#translationMatrix;
+    get Location() {
+        return vec3(this.#translationMatrix[0][3],
+                    this.#translationMatrix[1][3],
+                    this.#translationMatrix[2][3]);
     }
 
     set TranslationMatrix(value) {
-        if (value == this.#translationMatrix || value == null) return;
         this.#translationMatrix = value;
-    }
-
-    set CarAnimated(value) {
-        this.#carAnimated = value;
     }
     
     DriveCar(movements) {
@@ -55,18 +40,39 @@ class Car {
         var rotationAngle = 5;
         if (movements.KeyD && (movements.KeyW || movements.KeyS)) {
             this.#translationMatrix = mult(this.#translationMatrix, rotate(rotationAngle * -1, 0, 1, 0));
+            this.#PlaySound();
         }
         
         if (movements.KeyA && (movements.KeyW || movements.KeyS)) {
             this.#translationMatrix = mult(this.#translationMatrix, rotate(rotationAngle, 0, 1, 0));
+            this.#PlaySound();
         }
         
         if (movements.KeyW) {
             this.#translationMatrix = mult(this.#translationMatrix, translate(.5, 0, 0));
+            this.#PlaySound();
         }
 
         if (movements.KeyS) {
             this.#translationMatrix = mult(this.#translationMatrix, translate(-.5, 0, 0));
+            this.#PlaySound();
+        }
+    }
+
+    CancelSound() {
+        if (!this.#carSound.paused) {
+            this.#carSound.pause();
+            this.#carSound.currentTime = this.#soundStartTime;
+        }
+    }
+
+    #PlaySound() {
+        if (this.#carSound.paused) {
+            this.#carSound.play();
+        }
+
+        if (this.#carSound.currentTime > 20) {
+            this.#carSound.currentTime = this.#soundStartTime;
         }
     }
 
@@ -112,6 +118,16 @@ class Car {
             drawCount += this.#wheelVertCount;
             modelViewMatrix = modelViewStack.pop();
         }
+
+        // Render HeadLights here
+        for (var i = -1; i < 2; i += 2) {
+            modelViewStack.push(modelViewMatrix);
+            modelViewMatrix = mult(mult(modelViewMatrix, translate(.45, 0, .2 * i)), FeatureApi.scale4(1/10, 1/10, 1/10));
+            gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
+            Primitive.DrawSphere(drawCount);
+            drawCount += this.#headLightVertexCount;
+            modelViewMatrix = modelViewStack.pop();
+        }
     }
 
     Generate() {
@@ -121,6 +137,16 @@ class Car {
         for (var i = 0; i < 4; i++) {
             this.#DrawWheel(i == 0 ? true : false);
         }
+
+        this.#DrawHeadLights();
+    }
+
+    #DrawHeadLights() {
+        var headLightColor = FeatureApi.HexToColorVector("#EEDD82");
+
+        Primitive.GenerateSphere(headLightColor);
+        Primitive.GenerateSphere(headLightColor);
+        this.#headLightVertexCount += Primitive.sphereVertexCount;
     }
 
     #DrawWheel(accumulate) {
