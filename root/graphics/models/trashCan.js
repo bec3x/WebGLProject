@@ -153,7 +153,7 @@ class TrashCan {
         modelViewMatrix = modelViewStack.pop();
     }
 
-        // a 4x4 matrix multiple by a vec4
+    // a 4x4 matrix multiple by a vec4
     #multiply(m, v) {
         var vv = vec4(
             m[0][0] * v[0] + m[0][1] * v[1] + m[0][2] * v[2] + m[0][3] * v[3],

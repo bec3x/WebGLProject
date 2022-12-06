@@ -1,13 +1,9 @@
-/*  
-    Intention of this program is to be used as a general program to populate models
-    that we draw so that we do not have to recreate the same thing over and over
-*/
 /*
-// Project 4.2
+// Project 4.3
 // Authors: Brad Carter, Ronnie Jackson
 // Instructor: Cen Li
 // CSCI 4160-001
-// Due: 11/22/2022
+// Due: 12/06/2022
 */
 var canvas, program, gl;
 
