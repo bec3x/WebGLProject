@@ -1,9 +1,5 @@
 /*
-// Project 4.3
 // Authors: Brad Carter, Ronnie Jackson
-// Instructor: Cen Li
-// CSCI 4160-001
-// Due: 12/06/2022
 */
 var canvas, program, gl;
 
